@@ -1,4 +1,4 @@
-# Moonlight Touch (Big Remote Play)
+# Big Remote Play Controller
 
 A build of [Moonlight for Android](https://github.com/moonlight-stream/moonlight-android)
 12.2 that can send **native multi-touch** to Sunshine, so an on-screen
@@ -6,15 +6,15 @@ controller drawn on the game computer (Big WM Virtual Keyboard, through
 Big Remote Play) receives every finger as its own touch.
 
 It is **not** the official Moonlight: different application id
-(`io.github.bigremoteplay.moonlighttouch`), name *Moonlight Touch* and
-version `12.2-brptouch1`. It installs beside the official app; its pairing
+(`io.github.bigremoteplay.controller`), name *Big Remote Play Controller*
+and version `12.2-brpc1`. It installs beside the official app; its pairing
 and settings are separate. It is not published anywhere and not signed with
 Moonlight's key.
 
 ## What changed (only `brp/native-touch`)
 
 - Setting **Send touch to the computer (multi-touch)** (`checkbox_native_touch`,
-  off by default). Off: behaviour identical to upstream 12.2.
+  **on** by default in this app). Off: behaviour identical to upstream 12.2.
 - On, with a host that supports touch (Sunshine `native_pen_touch`): each
   finger goes to the host as `LiSendTouchEvent` with its pointer id and the
   position normalised to the video area (black bars excluded).

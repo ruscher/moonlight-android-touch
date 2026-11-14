@@ -133,7 +133,7 @@
             android:key="checkbox_native_touch"
             android:title="@string/title_checkbox_native_touch"
             android:summary="@string/summary_checkbox_native_touch"
-            android:defaultValue="false" />
+            android:defaultValue="true" />
         <CheckBoxPreference
             android:key="checkbox_touchscreen_trackpad"
             android:title="@string/title_checkbox_touchscreen_trackpad"

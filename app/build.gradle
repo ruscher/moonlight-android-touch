@@ -12,7 +12,7 @@ android {
         targetSdk 36
 
         // Big Remote Play Touch: upstream 12.2 + native multi-touch (see BRP-TOUCH.md)
-        versionName "12.2-brptouch1"
+        versionName "12.2-brpc1"
         versionCode = 315
 
         // Generate native debug symbols to allow Google Play to symbolicate our native crashes
@@ -38,7 +38,7 @@ android {
                 }
             }
 
-            applicationId "io.github.bigremoteplay.moonlighttouch.root"
+            applicationId "io.github.bigremoteplay.controller.root"
             dimension "root"
             buildConfigField "boolean", "ROOT_BUILD", "true"
         }
@@ -50,7 +50,7 @@ android {
                 }
             }
 
-            applicationId "io.github.bigremoteplay.moonlighttouch"
+            applicationId "io.github.bigremoteplay.controller"
             dimension "root"
             buildConfigField "boolean", "ROOT_BUILD", "false"
         }
@@ -85,8 +85,8 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
-            resValue "string", "app_label", "Moonlight Touch (Debug)"
-            resValue "string", "app_label_root", "Moonlight Touch (Root Debug)"
+            resValue "string", "app_label", "Big Remote Play Controller"
+            resValue "string", "app_label_root", "Big Remote Play Controller (Root)"
         }
         release {
             // To whomever is releasing/using an APK in release mode with
@@ -120,8 +120,8 @@ android {
             //
             // TL;DR: Leave the following line alone!
             applicationIdSuffix ".unofficial"
-            resValue "string", "app_label", "Moonlight Touch"
-            resValue "string", "app_label_root", "Moonlight Touch (Root)"
+            resValue "string", "app_label", "Big Remote Play Controller"
+            resValue "string", "app_label_root", "Big Remote Play Controller (Root)"
 
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
