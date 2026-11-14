@@ -303,4 +303,6 @@
     <string name="analogscroll_none">None (both sticks move the mouse)</string>
     <string name="analogscroll_right">Right analog stick</string>
     <string name="analogscroll_left">Left analog stick</string>
+    <string name="title_checkbox_native_touch">Send touch to the computer (multi-touch)</string>
+    <string name="summary_checkbox_native_touch">Every finger is sent to the computer as its own touch, for on-screen controllers drawn by the computer (Big Remote Play). Needs Sunshine. The three-finger keyboard tap is off while this is on.</string>
 </resources>

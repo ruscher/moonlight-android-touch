@@ -133,6 +133,12 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     private InputCaptureProvider inputCaptureProvider;
     private int modifierFlags = 0;
     private boolean grabbedInput = true;
+
+    // Native multi-touch (Big Remote Play): pointers whose DOWN reached the host
+    // and are not yet released there. Used to cancel exactly those when Android
+    // takes the gesture away, focus is lost or the stream stops.
+    private final android.util.SparseArray<float[]> nativeTouchPointers = new android.util.SparseArray<>();
+    private boolean nativeTouchUnsupported = false;
     private boolean cursorVisible = false;
     private boolean waitingForAllModifiersUp = false;
     private int specialKeyCode = KeyEvent.KEYCODE_UNKNOWN;
@@ -746,6 +752,12 @@ public class Game extends Activity implements SurfaceHolder.Callback,
         // lifted while focus was not on us. Clear the modifier state.
         this.modifierFlags = 0;
 
+        // Touches held while focus is lost (notification shade, dialog) would
+        // stay pressed on the host: release them there.
+        if (!hasFocus) {
+            cancelAllNativeTouches();
+        }
+
         // With Android native pointer capture, capture is lost when focus is lost,
         // so it must be requested again when focus is regained.
         inputCaptureProvider.onWindowFocusChanged(hasFocus);
@@ -1085,6 +1097,9 @@ public class Game extends Activity implements SurfaceHolder.Callback,
         if (virtualController != null) {
             virtualController.hide();
         }
+
+        // Release every finger on the host before the connection goes away.
+        cancelAllNativeTouches();
 
         if (conn != null) {
             int videoFormat = decoderRenderer.getActiveVideoFormat();
@@ -1753,6 +1768,116 @@ public class Game extends Activity implements SurfaceHolder.Callback,
                 getRotationDegrees(event, pointerIndex)) != MoonBridge.LI_ERR_UNSUPPORTED;
     }
 
+    // Native multi-touch for host-drawn on-screen controllers.
+    //
+    // Why upstream left trySendTouchEvent() disabled, and what changes here:
+    //  - Android cancels single pointers (FLAG_CANCELED on ACTION_POINTER_UP,
+    //    API 33+) or the whole gesture (ACTION_CANCEL) when it takes a touch for
+    //    itself. Each becomes CANCEL / CANCEL_ALL, never UP, so a button is
+    //    released without counting as a tap; and only pointers whose DOWN was
+    //    sent are ever reported (no MOVE/UP for unknown ids).
+    //  - The 3-finger tap that opens the keyboard cancels the other fingers;
+    //    in this mode it is not used (the setting says so).
+    //  - Moves are sent only when a pointer actually moved (no flood of
+    //    identical positions), and focus loss / stop release everything.
+    // Returns false only when the host refuses touch (LI_ERR_UNSUPPORTED).
+    private boolean sendNativeTouch(View view, MotionEvent event) {
+        int action = event.getActionMasked();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN: {
+                int index = event.getActionIndex();
+                return sendNativeTouchPointer(view, event, MoonBridge.LI_TOUCH_EVENT_DOWN, index, true);
+            }
+            case MotionEvent.ACTION_MOVE: {
+                for (int i = 0; i < event.getPointerCount(); i++) {
+                    float[] last = nativeTouchPointers.get(event.getPointerId(i));
+                    if (last == null) {
+                        continue; // its DOWN never reached the host
+                    }
+                    float[] xy = getStreamViewRelativeNormalizedXY(view, event, i);
+                    if (xy[0] == last[0] && xy[1] == last[1]) {
+                        continue;
+                    }
+                    if (!sendNativeTouchPointer(view, event, MoonBridge.LI_TOUCH_EVENT_MOVE, i, false)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_POINTER_UP: {
+                int index = event.getActionIndex();
+                int id = event.getPointerId(index);
+                if (nativeTouchPointers.get(id) == null) {
+                    return true;
+                }
+                boolean canceled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                        (event.getFlags() & MotionEvent.FLAG_CANCELED) != 0;
+                boolean ok = sendNativeTouchPointer(view, event,
+                        canceled ? MoonBridge.LI_TOUCH_EVENT_CANCEL : MoonBridge.LI_TOUCH_EVENT_UP, index, false);
+                nativeTouchPointers.remove(id);
+                return ok;
+            }
+            case MotionEvent.ACTION_CANCEL:
+                cancelAllNativeTouches();
+                return true;
+            default:
+                return true; // hover and buttons are not touches
+        }
+    }
+
+    private boolean sendNativeTouchPointer(View view, MotionEvent event, byte type, int index, boolean down) {
+        float[] xy = getStreamViewRelativeNormalizedXY(view, event, index);
+        float[] area = getStreamViewNormalizedContactArea(event, index);
+        int result = conn.sendTouchEvent(type, event.getPointerId(index), xy[0], xy[1],
+                getPressureOrDistance(event, index), area[0], area[1], getRotationDegrees(event, index));
+        if (result == MoonBridge.LI_ERR_UNSUPPORTED) {
+            return false;
+        }
+        if (down || type == MoonBridge.LI_TOUCH_EVENT_MOVE) {
+            nativeTouchPointers.put(event.getPointerId(index), xy);
+        }
+        return true;
+    }
+
+    private void cancelAllNativeTouches() {
+        if (nativeTouchPointers.size() == 0 || conn == null) {
+            nativeTouchPointers.clear();
+            return;
+        }
+        nativeTouchPointers.clear();
+        conn.sendTouchEvent(MoonBridge.LI_TOUCH_EVENT_CANCEL_ALL, 0, 0, 0, 0, 0, 0, MoonBridge.LI_ROT_UNKNOWN);
+    }
+
+    // Keep Android's edge-swipe "back" gesture from stealing fingers on the
+    // left and right controls (the system honours up to 200 dp per edge).
+    private void updateNativeTouchGestureExclusion() {
+        // The background view receives the touches and spans the whole screen,
+        // including the black bars where the system's edge gestures start.
+        final View touchView = findViewById(R.id.backgroundTouchView);
+        if (!prefConfig.nativeTouch || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || touchView == null) {
+            return;
+        }
+        touchView.post(new Runnable() {
+            @Override
+            public void run() {
+                int w = touchView.getWidth(), h = touchView.getHeight();
+                if (w <= 0 || h <= 0) {
+                    return;
+                }
+                float density = getResources().getDisplayMetrics().density;
+                int band = (int) (48 * density);
+                int limit = Math.min(h, (int) (200 * density));
+                int top = (h - limit) / 2;
+                java.util.List<android.graphics.Rect> rects = new java.util.ArrayList<>();
+                rects.add(new android.graphics.Rect(0, top, band, top + limit));
+                rects.add(new android.graphics.Rect(w - band, top, w, top + limit));
+                touchView.setSystemGestureExclusionRects(rects);
+            }
+        });
+    }
+
     private boolean trySendTouchEvent(View view, MotionEvent event) {
         byte eventType = getLiTouchTypeFromEvent(event);
         if (eventType < 0) {
@@ -2016,6 +2141,18 @@ public class Game extends Activity implements SurfaceHolder.Callback,
 
                 int eventX = (int)(event.getX(actionIndex) + xOffset);
                 int eventY = (int)(event.getY(actionIndex) + yOffset);
+
+                // Native multi-touch: every finger goes to the host as its own
+                // touch, before any trackpad gesture (the 3-finger keyboard tap is off in this mode,
+                // which would cancel the other fingers mid-game).
+                if (prefConfig.nativeTouch && !nativeTouchUnsupported) {
+                    if (sendNativeTouch(view, event)) {
+                        return true;
+                    }
+                    // The host does not accept touch: fall back to the mouse below.
+                    nativeTouchUnsupported = true;
+                    LimeLog.warning("Host does not support native touch; using mouse emulation");
+                }
 
                 // Special handling for 3 finger gesture
                 if (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN &&
@@ -2414,6 +2551,13 @@ public class Game extends Activity implements SurfaceHolder.Callback,
                 connected = true;
                 connecting = false;
                 updatePipAutoEnter();
+
+                // Sunshine keeps touches of a previous session that dropped
+                // without a release; start from a clean state.
+                if (prefConfig.nativeTouch && conn != null) {
+                    conn.sendTouchEvent(MoonBridge.LI_TOUCH_EVENT_CANCEL_ALL, 0, 0, 0, 0, 0, 0, MoonBridge.LI_ROT_UNKNOWN);
+                }
+                updateNativeTouchGestureExclusion();
 
                 // Hide the mouse cursor now after a short delay.
                 // Doing it before dismissing the spinner seems to be undone
