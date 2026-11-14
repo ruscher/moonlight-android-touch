@@ -7,9 +7,10 @@ Big Remote Play) receives every finger as its own touch.
 
 It is **not** the official Moonlight: different application id
 (`io.github.bigremoteplay.controller`), name *Big Remote Play Controller*
-and version `12.2-brpc1`. It installs beside the official app; its pairing
-and settings are separate. It is not published anywhere and not signed with
-Moonlight's key.
+and version `12.2-brpc2`. It installs beside the official app; its pairing
+and settings are separate. Release APKs are signed with the Big Remote Play
+Controller key, never with Moonlight's, and published as
+[Big Remote Play releases](https://github.com/ruscher/big-remote-play/releases).
 
 ## What changed (only `brp/native-touch`)
 
@@ -31,6 +32,11 @@ Moonlight's key.
     and the start of a new stream send `CANCEL_ALL`, so nothing stays pressed
     on the host (Sunshine 2026.914 keeps touches of a dropped session).
 - A host without touch support falls back to the normal mouse emulation.
+- Resolution fitted to the decoder: a size the phone's decoder refuses (for
+  example the native 2400x1080 on a decoder limited to 1920 pixels wide)
+  made MediaCodec throw while configuring and the connection fail with
+  error -5. The app now streams at the largest size with the same shape that
+  every offered decoder accepts (2400x1080 becomes 1920x864) and says so.
 
 ## Build (debug APK, signed with your own local debug key)
 
@@ -47,6 +53,20 @@ adb install -r app/build/outputs/apk/nonRoot/debug/app-nonRoot-debug.apk
 
 The debug key is created by the Android tools on your computer
 (`~/.android/debug.keystore`); it is fine for testing on your own phone.
+
+## Release APK
+
+```sh
+./gradlew assembleNonRootRelease
+# app/build/outputs/apk/nonRoot/release/app-nonRoot-release-unsigned.apk
+apksigner sign --ks /path/to/big-remote-play-controller.jks \
+  --out big-remote-play-controller-12.2-brpc2.apk \
+  app/build/outputs/apk/nonRoot/release/app-nonRoot-release-unsigned.apk
+apksigner verify --print-certs big-remote-play-controller-12.2-brpc2.apk
+```
+
+The release application id is `io.github.bigremoteplay.controller` (the debug
+build adds `.debug`); both can be installed side by side.
 
 ## License
 

@@ -399,6 +399,17 @@ public class Game extends Activity implements SurfaceHolder.Callback,
                 glPrefs.glRenderer,
                 this);
 
+        // Big Remote Play: never request a size the decoder refuses (error -5).
+        int[] fitted = decoderRenderer.fitResolutionToDecoders(prefConfig.width, prefConfig.height);
+        if (fitted != null) {
+            LimeLog.warning("Decoder refuses " + prefConfig.width + "x" + prefConfig.height +
+                    "; streaming at " + fitted[0] + "x" + fitted[1]);
+            Toast.makeText(this, getString(R.string.resolution_fitted_to_decoder,
+                    prefConfig.width, prefConfig.height, fitted[0], fitted[1]), Toast.LENGTH_LONG).show();
+            prefConfig.width = fitted[0];
+            prefConfig.height = fitted[1];
+        }
+
         // Don't stream HDR if the decoder can't support it
         if (willStreamHdr && !decoderRenderer.isHevcMain10Hdr10Supported() && !decoderRenderer.isAv1Main10Supported()) {
             willStreamHdr = false;

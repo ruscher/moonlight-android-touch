@@ -363,6 +363,46 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer implements C
         }
     }
 
+    private static boolean decoderSupportsSize(MediaCodecInfo decoder, String mimeType, int width, int height) {
+        if (decoder == null) {
+            return true;
+        }
+        try {
+            MediaCodecInfo.VideoCapabilities caps =
+                    decoder.getCapabilitiesForType(mimeType).getVideoCapabilities();
+            return caps == null || caps.isSizeSupported(width, height);
+        } catch (IllegalArgumentException e) {
+            return true; // no answer from the decoder: do not second-guess it
+        }
+    }
+
+    private boolean decodersSupportSize(int width, int height) {
+        // The host picks the codec, so every decoder we offer must take the size.
+        return decoderSupportsSize(avcDecoder, "video/avc", width, height) &&
+                decoderSupportsSize(hevcDecoder, "video/hevc", width, height) &&
+                decoderSupportsSize(av1Decoder, "video/av01", width, height);
+    }
+
+    // Big Remote Play: a resolution the decoder refuses (e.g. the phone's
+    // native 2400x1080 on a decoder limited to 1920 wide) makes MediaCodec
+    // throw while configuring and the connection fails with error -5. Return
+    // the largest size with the same aspect ratio that every decoder accepts,
+    // or null when the requested size is fine (or nothing smaller helps).
+    public int[] fitResolutionToDecoders(int width, int height) {
+        if (width <= 0 || height <= 0 || decodersSupportSize(width, height)) {
+            return null;
+        }
+        double aspect = (double) height / width;
+        for (int w = width - (width % 8); w >= 640; w -= 8) {
+            int h = (int) Math.round(w * aspect);
+            h -= h % 2;
+            if (h >= 2 && decodersSupportSize(w, h)) {
+                return new int[] { w, h };
+            }
+        }
+        return null;
+    }
+
     public boolean isHevcSupported() {
         return hevcDecoder != null;
     }

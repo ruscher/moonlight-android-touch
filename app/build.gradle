@@ -12,7 +12,7 @@ android {
         targetSdk 36
 
         // Big Remote Play Touch: upstream 12.2 + native multi-touch (see BRP-TOUCH.md)
-        versionName "12.2-brpc1"
+        versionName "12.2-brpc2"
         versionCode = 315
 
         // Generate native debug symbols to allow Google Play to symbolicate our native crashes
@@ -119,7 +119,9 @@ android {
             // is to please change the applicationId before you publish.
             //
             // TL;DR: Leave the following line alone!
-            applicationIdSuffix ".unofficial"
+            // Big Remote Play Controller ships under its own application ID
+            // (io.github.bigremoteplay.controller, see productFlavors), never
+            // Moonlight's, so the ".unofficial" guard above is not needed.
             resValue "string", "app_label", "Big Remote Play Controller"
             resValue "string", "app_label_root", "Big Remote Play Controller (Root)"
 

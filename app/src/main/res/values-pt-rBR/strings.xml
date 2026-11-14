@@ -253,4 +253,5 @@
     <string name="pcview_menu_eol">Fim do serviço NVIDIA GameStream</string>
     <string name="title_checkbox_native_touch">Enviar toques ao computador (multitoque)</string>
     <string name="summary_checkbox_native_touch">Cada dedo vai ao computador como um toque próprio, para controles na tela desenhados pelo computador (Big Remote Play). Requer o Sunshine. O toque com três dedos que abre o teclado fica desligado com esta opção.</string>
+    <string name="resolution_fitted_to_decoder">Este celular não decodifica %1$d×%2$d; transmitindo em %3$d×%4$d (mesmo formato).</string>
 </resources>
