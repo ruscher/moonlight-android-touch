@@ -1,6 +1,7 @@
 package com.limelight.grid;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageView;
@@ -160,8 +161,46 @@ public class AppGridAdapter extends GenericGridAdapter<AppView.AppObject> {
         allApps.clear();
     }
 
+    @SuppressWarnings("deprecation") // Context.getColor() needs API 23; minSdk is 21
+    private int color(int id) {
+        return context.getResources().getColor(id);
+    }
+
+    private static int badgeIcon(BrpAppKind.Kind kind) {
+        switch (kind) {
+            case DESKTOP:
+                return R.drawable.ic_brp_desktop;
+            case MONITOR:
+                return R.drawable.ic_brp_monitor;
+            case STEAM:
+                return R.drawable.ic_brp_steam;
+            default:
+                return R.drawable.ic_brp_game;
+        }
+    }
+
     @Override
     public void populateView(View parentView, ImageView imgView, ProgressBar prgView, TextView txtView, ImageView overlayView, AppView.AppObject obj) {
+        // Round the box art with the card (the XML attribute only works on API 31+)
+        parentView.setClipToOutline(true);
+
+        // Recognisable icon behind the box art; it shows when the computer sends none
+        BrpAppKind kind = BrpAppKind.of(obj.app.getAppName());
+        ImageView badge = parentView.findViewById(R.id.grid_badge);
+        if (badge != null) {
+            badge.setImageResource(badgeIcon(kind.kind));
+        }
+        TextView badgeText = parentView.findViewById(R.id.grid_badge_text);
+        if (badgeText != null) {
+            if (kind.number != null) {
+                badgeText.setText(kind.number);
+                badgeText.setVisibility(View.VISIBLE);
+            }
+            else {
+                badgeText.setVisibility(View.GONE);
+            }
+        }
+
         // Let the cached asset loader handle it
         loader.populateImageView(obj.app, imgView, txtView);
 
@@ -180,5 +219,40 @@ public class AppGridAdapter extends GenericGridAdapter<AppView.AppObject> {
         else {
             parentView.setAlpha(1.0f);
         }
+
+        // State in words: Playing, Hidden, Low bandwidth
+        TextView pill = parentView.findViewById(R.id.grid_pill);
+        String pillText = null;
+        if (pill != null) {
+            // Solid backgrounds: the pill must stay legible over box art
+            int background = R.color.brp_window;
+            int foreground = R.color.brp_text;
+            if (obj.isRunning) {
+                pillText = context.getString(R.string.brp_status_playing);
+                background = R.color.brp_primary;
+                foreground = R.color.brp_on_primary;
+            }
+            else if (obj.isHidden) {
+                pillText = context.getString(R.string.brp_app_hidden);
+            }
+            else if (kind.lowBandwidth) {
+                pillText = context.getString(R.string.brp_app_low_bandwidth);
+                foreground = R.color.brp_accent_text;
+            }
+
+            if (pillText != null) {
+                pill.setText(pillText);
+                pill.setTextColor(color(foreground));
+                pill.setBackgroundTintList(ColorStateList.valueOf(color(background)));
+                pill.setVisibility(View.VISIBLE);
+            }
+            else {
+                pill.setVisibility(View.GONE);
+            }
+        }
+
+        // The name is always spoken, even when only the box art is visible
+        String name = obj.app.getAppName();
+        parentView.setContentDescription(pillText != null ? name + ", " + pillText : name);
     }
 }

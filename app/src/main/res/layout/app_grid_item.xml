@@ -1,29 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- An entry card. Box art (grid_image) covers the card when the computer sends one;
+     otherwise the card shows a recognisable icon (grid_badge: Desktop, Monitor,
+     Steam, game) and the name. grid_pill states Playing / Hidden / Low bandwidth
+     in words. Ids used by GenericGridAdapter/AppGridAdapter/CachedAppAssetLoader. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="150dp"
     android:layout_height="200dp"
-    android:padding="10dp">
+    android:background="@drawable/brp_card">
+
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/brp_chip"
+        android:backgroundTint="@color/brp_chip">
+
+        <ImageView
+            android:id="@+id/grid_badge"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:tint="@color/brp_accent_text" />
+
+        <TextView
+            android:id="@+id/grid_badge_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:importantForAccessibility="no"
+            android:textColor="@color/brp_accent_text"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </FrameLayout>
+
     <ImageView
         android:id="@+id/grid_image"
-        android:cropToPadding="false"
-        android:scaleType="fitXY"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ImageView>
-    <ImageView
-        android:id="@+id/grid_overlay"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_width="50dp"
-        android:layout_height="50dp">
-    </ImageView>
+        android:layout_height="match_parent"
+        android:cropToPadding="false"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY" />
+
     <TextView
         android:id="@+id/grid_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/grid_overlay"
-        android:layout_margin="5dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="16dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:ellipsize="end"
         android:gravity="center"
-        android:textSize="18sp">
-    </TextView>
-</RelativeLayout>
+        android:maxLines="3"
+        android:textColor="@color/brp_text"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/grid_overlay"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
+        android:background="@drawable/brp_dot"
+        android:backgroundTint="@color/brp_scrim"
+        android:padding="10dp"
+        android:importantForAccessibility="no"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/grid_pill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_margin="6dp"
+        android:background="@drawable/brp_pill"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+</FrameLayout>

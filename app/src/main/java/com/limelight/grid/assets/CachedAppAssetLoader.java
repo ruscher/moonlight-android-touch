@@ -202,7 +202,7 @@ public class CachedAppAssetLoader {
                 imageView.setImageDrawable(asyncDrawable);
                 imageView.startAnimation(AnimationUtils.loadAnimation(imageView.getContext(), R.anim.boxart_fadein));
                 imageView.setVisibility(View.VISIBLE);
-                textView.setVisibility(View.VISIBLE);
+                showPlaceholder(imageView, textView, true);
                 task.executeOnExecutor(networkExecutor, tuple);
             }
         }
@@ -220,7 +220,7 @@ public class CachedAppAssetLoader {
                 // Fade in the box art
                 if (bitmap != null) {
                     // Show the text if it's a placeholder
-                    textView.setVisibility(isBitmapPlaceholder(bitmap) ? View.VISIBLE : View.GONE);
+                    showPlaceholder(imageView, textView, isBitmapPlaceholder(bitmap));
 
                     if (imageView.getVisibility() == View.VISIBLE) {
                         // Fade out the placeholder first
@@ -325,6 +325,13 @@ public class CachedAppAssetLoader {
         });
     }
 
+    // Big Remote Play: without real box art, hide the server's generic placeholder image so
+    // the card's own icon (Desktop, Monitor, Steam, game) and the name show instead.
+    private static void showPlaceholder(ImageView imageView, TextView textView, boolean placeholder) {
+        textView.setVisibility(placeholder ? View.VISIBLE : View.GONE);
+        imageView.setImageAlpha(placeholder ? 0 : 255);
+    }
+
     private boolean isBitmapPlaceholder(ScaledBitmap bitmap) {
         return (bitmap == null) ||
                 (bitmap.originalWidth == 130 && bitmap.originalHeight == 180) || // GFE 2.0
@@ -352,7 +359,7 @@ public class CachedAppAssetLoader {
             imgView.setImageBitmap(bmp.bitmap);
 
             // Show the text if it's a placeholder bitmap
-            textView.setVisibility(isBitmapPlaceholder(bmp) ? View.VISIBLE : View.GONE);
+            showPlaceholder(imgView, textView, isBitmapPlaceholder(bmp));
             return true;
         }
 
