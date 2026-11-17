@@ -254,4 +254,31 @@
     <string name="title_checkbox_native_touch">Enviar toques ao computador (multitoque)</string>
     <string name="summary_checkbox_native_touch">Cada dedo vai ao computador como um toque próprio, para controles na tela desenhados pelo computador (Big Remote Play). Requer o Sunshine. O toque com três dedos que abre o teclado fica desligado com esta opção.</string>
     <string name="resolution_fitted_to_decoder">Este celular não decodifica %1$d×%2$d; transmitindo em %3$d×%4$d (mesmo formato).</string>
+
+    <!-- Big Remote Play Controller UI (BRP-UI.md) -->
+    <string name="brp_section_computers">Computadores</string>
+    <string name="brp_add_computer">Adicionar computador</string>
+    <string name="brp_how_to_connect">Como conectar</string>
+    <string name="brp_settings">Configurações</string>
+    <string name="brp_empty_title">Procurando computadores…</string>
+    <string name="brp_empty_body">No computador do jogo, abra o Big Remote Play, vá em Compartilhar e escolha Iniciar compartilhamento. Os computadores desta rede aparecem aqui sozinhos.\n\nUsa Tailscale, Headscale ou ZeroTier, ou o computador não apareceu? Adicione-o pelo endereço.</string>
+    <string name="brp_status_online">Online</string>
+    <string name="brp_status_offline">Offline</string>
+    <string name="brp_status_checking">Verificando…</string>
+    <string name="brp_status_paired">Pareado</string>
+    <string name="brp_status_not_paired">Não pareado</string>
+    <string name="brp_status_playing">Jogando</string>
+    <string name="brp_applist_subtitle">Escolha o que jogar</string>
+    <string name="brp_app_hidden">Oculto</string>
+    <string name="brp_app_low_bandwidth">Rede lenta</string>
+    <string name="brp_help_title">Conecte-se ao computador do jogo</string>
+    <string name="brp_help_body">1. No computador do jogo, abra o Big Remote Play, vá em Compartilhar e escolha Iniciar compartilhamento.\n\n2. Deixe este aparelho na mesma rede, ou ligue os dois à mesma rede privada (Tailscale, Headscale ou ZeroTier).\n\n3. Toque no computador quando ele aparecer aqui. Se não aparecer, escolha Adicionar computador e digite o endereço (IP ou nome).\n\n4. Este app mostra um PIN. No computador, o Big Remote Play pede esse PIN: digite-o lá para parear. Isso é feito só uma vez.\n\n5. Escolha Desktop para ver a tela inteira, Desktop Low em conexões lentas, ou um jogo.</string>
+    <string name="brp_help_moonlight_guide">Guia do Moonlight</string>
+    <string name="brp_close">Fechar</string>
+    <string name="brp_about_title">Sobre o Big Remote Play Controller</string>
+    <string name="brp_about_version">Versão %1$s</string>
+    <string name="brp_about_body">O lado que recebe do Big Remote Play no Android: jogue os jogos e use a área de trabalho de um computador que os compartilha com o Big Remote Play (Sunshine).\n\nBaseado no Moonlight para Android 12.2, do Moonlight Game Streaming Project. Versão não oficial, sem suporte dos desenvolvedores do Moonlight.\n\nSoftware livre sob a Licença Pública Geral GNU, versão 3.</string>
+    <string name="brp_category_about">Sobre</string>
+    <string name="brp_addpc_help">Digite o endereço IP ou o nome do computador. Com Tailscale, Headscale ou ZeroTier, use o endereço dele nessa rede (por exemplo, 100.x.y.z).</string>
+    <string name="brp_pair_help">No computador do jogo, o Big Remote Play avisa que este aparelho quer se conectar: digite este PIN lá (página Compartilhar). A página web do Sunshine também aceita o PIN.</string>
 </resources>

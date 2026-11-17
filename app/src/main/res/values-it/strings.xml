@@ -288,4 +288,31 @@
     <string name="analogscroll_none">Nessuna (entrambi gli stick muovono il mouse)</string>
     <string name="analogscroll_right">Stick analogico destro</string>
     <string name="analogscroll_left">Stick analogico sinistro</string>
+
+    <!-- Big Remote Play Controller UI (BRP-UI.md) -->
+    <string name="brp_section_computers">Computer</string>
+    <string name="brp_add_computer">Aggiungi computer</string>
+    <string name="brp_how_to_connect">Come connettersi</string>
+    <string name="brp_settings">Impostazioni</string>
+    <string name="brp_empty_title">Ricerca dei computer…</string>
+    <string name="brp_empty_body">Sul computer di gioco, apri Big Remote Play, vai su Condividi e scegli Avvia la condivisione. I computer di questa rete compaiono qui da soli.\n\nUsi Tailscale, Headscale o ZeroTier, oppure il computer non compare? Aggiungilo tramite il suo indirizzo.</string>
+    <string name="brp_status_online">Online</string>
+    <string name="brp_status_offline">Offline</string>
+    <string name="brp_status_checking">Controllo…</string>
+    <string name="brp_status_paired">Associato</string>
+    <string name="brp_status_not_paired">Non associato</string>
+    <string name="brp_status_playing">In gioco</string>
+    <string name="brp_applist_subtitle">Scegli a cosa giocare</string>
+    <string name="brp_app_hidden">Nascosto</string>
+    <string name="brp_app_low_bandwidth">Rete lenta</string>
+    <string name="brp_help_title">Connettiti al computer di gioco</string>
+    <string name="brp_help_body">1. Sul computer di gioco, apri Big Remote Play, vai su Condividi e scegli Avvia la condivisione.\n\n2. Tieni questo dispositivo sulla stessa rete, oppure collega entrambi alla stessa rete privata (Tailscale, Headscale o ZeroTier).\n\n3. Tocca il computer quando compare qui. Se non compare, scegli Aggiungi computer e scrivi il suo indirizzo (IP o nome).\n\n4. Questa app mostra un PIN. Sul computer, Big Remote Play lo chiede: scrivilo lì per associare. Basta farlo una volta.\n\n5. Scegli Desktop per vedere tutto lo schermo, Desktop Low con una connessione lenta, oppure un gioco.</string>
+    <string name="brp_help_moonlight_guide">Guida di Moonlight</string>
+    <string name="brp_close">Chiudi</string>
+    <string name="brp_about_title">Informazioni su Big Remote Play Controller</string>
+    <string name="brp_about_version">Versione %1$s</string>
+    <string name="brp_about_body">Il lato ricevente di Big Remote Play su Android: gioca ai giochi e usa il desktop di un computer che li condivide con Big Remote Play (Sunshine).\n\nBasato su Moonlight per Android 12.2, del Moonlight Game Streaming Project. Versione non ufficiale, non supportata dagli sviluppatori di Moonlight.\n\nSoftware libero sotto la GNU General Public License, versione 3.</string>
+    <string name="brp_category_about">Informazioni</string>
+    <string name="brp_addpc_help">Scrivi l’indirizzo IP o il nome del computer. Con Tailscale, Headscale o ZeroTier, usa il suo indirizzo su quella rete (per esempio 100.x.y.z).</string>
+    <string name="brp_pair_help">Sul computer di gioco, Big Remote Play segnala che questo dispositivo vuole connettersi: scrivi lì questo PIN (pagina Condividi). Anche la pagina web di Sunshine accetta il PIN.</string>
 </resources>

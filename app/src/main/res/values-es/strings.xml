@@ -285,4 +285,31 @@
     <string name="title_seekbar_vibrate_fallback_strength">Ajustar la intensidad del ruido emulado</string>
     <string name="summary_seekbar_vibrate_fallback_strength">Amplifica o reduce la intensidad de la vibración de tu dispositivo</string>
     <string name="suffix_seekbar_vibrate_fallback_strength">%</string>
+
+    <!-- Big Remote Play Controller UI (BRP-UI.md) -->
+    <string name="brp_section_computers">Equipos</string>
+    <string name="brp_add_computer">Añadir equipo</string>
+    <string name="brp_how_to_connect">Cómo conectar</string>
+    <string name="brp_settings">Ajustes</string>
+    <string name="brp_empty_title">Buscando equipos…</string>
+    <string name="brp_empty_body">En el equipo de juego, abre Big Remote Play, ve a Compartir y elige Empezar a compartir. Los equipos de esta red aparecen aquí solos.\n\n¿Usas Tailscale, Headscale o ZeroTier, o el equipo no aparece? Añádelo por su dirección.</string>
+    <string name="brp_status_online">En línea</string>
+    <string name="brp_status_offline">Sin conexión</string>
+    <string name="brp_status_checking">Comprobando…</string>
+    <string name="brp_status_paired">Emparejado</string>
+    <string name="brp_status_not_paired">Sin emparejar</string>
+    <string name="brp_status_playing">Jugando</string>
+    <string name="brp_applist_subtitle">Elige a qué jugar</string>
+    <string name="brp_app_hidden">Oculto</string>
+    <string name="brp_app_low_bandwidth">Red lenta</string>
+    <string name="brp_help_title">Conéctate al equipo de juego</string>
+    <string name="brp_help_body">1. En el equipo de juego, abre Big Remote Play, ve a Compartir y elige Empezar a compartir.\n\n2. Mantén este dispositivo en la misma red, o conecta ambos a la misma red privada (Tailscale, Headscale o ZeroTier).\n\n3. Toca el equipo cuando aparezca aquí. Si no aparece, elige Añadir equipo y escribe su dirección (IP o nombre).\n\n4. Esta aplicación muestra un PIN. En el equipo, Big Remote Play lo pide: escríbelo allí para emparejar. Solo hace falta una vez.\n\n5. Elige Desktop para ver toda la pantalla, Desktop Low con una conexión lenta, o un juego.</string>
+    <string name="brp_help_moonlight_guide">Guía de Moonlight</string>
+    <string name="brp_close">Cerrar</string>
+    <string name="brp_about_title">Acerca de Big Remote Play Controller</string>
+    <string name="brp_about_version">Versión %1$s</string>
+    <string name="brp_about_body">La parte receptora de Big Remote Play en Android: juega a los juegos y usa el escritorio de un equipo que los comparte con Big Remote Play (Sunshine).\n\nBasado en Moonlight para Android 12.2, del Moonlight Game Streaming Project. Versión no oficial, sin soporte de los desarrolladores de Moonlight.\n\nSoftware libre bajo la Licencia Pública General de GNU, versión 3.</string>
+    <string name="brp_category_about">Acerca de</string>
+    <string name="brp_addpc_help">Escribe la dirección IP o el nombre del equipo. Con Tailscale, Headscale o ZeroTier, usa su dirección en esa red (por ejemplo, 100.x.y.z).</string>
+    <string name="brp_pair_help">En el equipo de juego, Big Remote Play avisa de que este dispositivo quiere conectarse: escribe allí este PIN (página Compartir). La página web de Sunshine también acepta el PIN.</string>
 </resources>

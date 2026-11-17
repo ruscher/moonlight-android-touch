@@ -274,6 +274,13 @@
             android:summary="@string/summary_enable_post_stream_toast"
             android:defaultValue="false"/>
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/brp_category_about"
+        android:key="category_brp_about">
+        <Preference
+            android:key="brp_about"
+            android:title="@string/brp_about_title"
+            android:persistent="false" />
+    </PreferenceCategory>
     <!--PreferenceCategory android:title="@string/category_help"
         android:key="category_help">
         <com.limelight.preferences.WebLauncherPreference
