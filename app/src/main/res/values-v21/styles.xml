@@ -1,14 +1,43 @@
 <resources>
 
-    <!--
-        Base application theme for API 21+. This theme completely replaces
-        AppBaseTheme from BOTH res/values/styles.xml and
-        res/values-v21/styles.xml on API 21+ devices.
-    -->
-    <style name="AppBaseTheme" parent="android:Theme.Material">
-        <!-- API 21 theme customizations can go here. -->
+    <!-- Upstream Moonlight's API 21 theme: used only by the stream (StreamTheme). -->
+    <style name="LegacyBaseTheme" parent="android:Theme.Material">
         <item name="android:statusBarColor">#212121</item>
         <item name="android:navigationBarColor">#212121</item>
+    </style>
+
+    <!-- Light or dark platform parent: values-night-v21 and values-television-v21 pick
+         Theme.Material, so the app follows the system's dark theme and TVs stay dark. -->
+    <style name="BrpThemeParent" parent="android:Theme.Material.Light" />
+    <style name="BrpAlertParent" parent="android:Theme.Material.Light.Dialog.Alert" />
+
+    <!-- Big Remote Play look (AshyWall language, see BRP-UI.md) -->
+    <style name="Brp.Base.V21" parent="BrpThemeParent">
+        <item name="android:colorPrimary">@color/brp_primary</item>
+        <item name="android:colorPrimaryDark">@color/brp_legacy_bars</item>
+        <item name="android:colorAccent">@color/brp_accent_text</item>
+        <item name="android:colorControlActivated">@color/brp_accent</item>
+        <item name="android:colorControlNormal">@color/brp_text_secondary</item>
+        <item name="android:colorControlHighlight">@color/brp_ripple</item>
+        <item name="android:colorBackground">@color/brp_window</item>
+        <item name="android:windowBackground">@color/brp_window</item>
+        <!-- Status bar icons are always white before API 23, so keep the bars dark there -->
+        <item name="android:statusBarColor">@color/brp_legacy_bars</item>
+        <item name="android:navigationBarColor">@color/brp_legacy_bars</item>
+        <item name="android:alertDialogTheme">@style/Brp.AlertDialog</item>
+    </style>
+
+    <style name="Brp.Base" parent="Brp.Base.V21" />
+
+    <style name="AppBaseTheme" parent="Brp.Base" />
+
+    <!-- Dialogs: elevated surface, large rounded corners, accent buttons -->
+    <style name="Brp.AlertDialog" parent="BrpAlertParent">
+        <item name="android:colorAccent">@color/brp_accent_text</item>
+        <item name="android:colorControlActivated">@color/brp_accent</item>
+        <item name="android:colorControlHighlight">@color/brp_ripple</item>
+        <item name="android:colorBackground">@color/brp_surface_elevated</item>
+        <item name="android:windowBackground">@drawable/brp_dialog_background</item>
     </style>
 
 </resources>

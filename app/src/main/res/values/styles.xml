@@ -2,18 +2,15 @@
 <resources>
 
     <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        Base application themes, dependent on API level (res/values-vXX/styles.xml).
 
+        AppBaseTheme is the Big Remote Play look (light/dark, see brp_colors.xml) used by
+        every screen outside the stream. LegacyBaseTheme is upstream Moonlight's theme,
+        kept unchanged for the stream activity so streaming looks and behaves as before.
     -->
-    <style name="AppBaseTheme" parent="android:Theme">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+    <style name="LegacyBaseTheme" parent="android:Theme" />
 
-        -->
-    </style>
+    <style name="AppBaseTheme" parent="android:Theme" />
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
@@ -22,7 +19,7 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="StreamBaseTheme" parent="AppBaseTheme">
+    <style name="StreamBaseTheme" parent="LegacyBaseTheme">
         <!-- Transparent streaming background to avoid extra overdraw -->
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>

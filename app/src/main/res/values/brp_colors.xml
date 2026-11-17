@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Big Remote Play palette, light (AshyWall base). Dark values: values-night and
+     values-television (TVs are always dark). See BRP-UI.md for contrast ratios. -->
+<resources>
+    <color name="brp_window">#F4F3F8</color>
+    <color name="brp_surface">#FFFFFF</color>
+    <color name="brp_surface_elevated">#FFFFFF</color>
+    <color name="brp_text">#1E1B2E</color>
+    <color name="brp_text_secondary">#5D5A6B</color>
+    <color name="brp_accent">#6F4AFF</color>
+    <color name="brp_accent_text">#5B3AE6</color>
+    <color name="brp_chip">#1F6F4AFF</color>
+    <color name="brp_chip_neutral">#14000000</color>
+    <color name="brp_focus">#5B3AE6</color>
+    <color name="brp_outline">#1A000000</color>
+    <color name="brp_ripple">#1F1E1B2E</color>
+    <color name="brp_status_online">#1A7F4B</color>
+    <color name="brp_status_attention">#8A5A00</color>
+    <color name="brp_status_offline">#5D5A6B</color>
+    <color name="brp_status_playing">#0E7490</color>
+    <bool name="brp_light_bars">true</bool>
+
+    <!-- The same in both modes -->
+    <color name="brp_primary">#6F4AFF</color>
+    <color name="brp_on_primary">#FFFFFF</color>
+    <color name="brp_on_primary_ripple">#3DFFFFFF</color>
+    <color name="brp_legacy_bars">#151A35</color>
+    <color name="brp_scrim">#99000000</color>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A standard (non-suggested) action: outlined, focus ring -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/brp_ripple">
+    <item>
+        <selector>
+            <item android:state_focused="true">
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/brp_radius_button" />
+                    <solid android:color="@color/brp_chip_neutral" />
+                    <stroke android:width="@dimen/brp_focus_ring" android:color="@color/brp_focus" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/brp_radius_button" />
+                    <solid android:color="@android:color/transparent" />
+                    <stroke android:width="1dp" android:color="@color/brp_text_secondary" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+</ripple>
