@@ -7,12 +7,20 @@ Big Remote Play) receives every finger as its own touch.
 
 It is **not** the official Moonlight: different application id
 (`io.github.bigremoteplay.controller`), name *Big Remote Play Controller*
-and version `12.2-brpc2`. It installs beside the official app; its pairing
+and version `12.2-brpc3`. It installs beside the official app; its pairing
 and settings are separate. Release APKs are signed with the Big Remote Play
 Controller key, never with Moonlight's, and published as
 [Big Remote Play releases](https://github.com/ruscher/big-remote-play/releases).
 
-## What changed (only `brp/native-touch`)
+## Look and guidance (`brp/modern-ui`)
+
+From `12.2-brpc3` the app wears Big Remote Play's icon and the desktop app's
+AshyWall look (light/dark, Gamer palette, cards, state in words), guides a Big
+Remote Play user (how to connect, pairing hint, recognisable Desktop / Monitor /
+Steam entries) and has an About entry. Streaming is untouched. Details, palette
+and the manual test checklist: [BRP-UI.md](BRP-UI.md).
+
+## What changed for touch (`brp/native-touch`)
 
 - Setting **Send touch to the computer (multi-touch)** (`checkbox_native_touch`,
   **on** by default in this app). Off: behaviour identical to upstream 12.2.
@@ -60,10 +68,14 @@ The debug key is created by the Android tools on your computer
 ./gradlew assembleNonRootRelease
 # app/build/outputs/apk/nonRoot/release/app-nonRoot-release-unsigned.apk
 apksigner sign --ks /path/to/big-remote-play-controller.jks \
-  --out big-remote-play-controller-12.2-brpc2.apk \
+  --out big-remote-play-controller-12.2-brpc3.apk \
   app/build/outputs/apk/nonRoot/release/app-nonRoot-release-unsigned.apk
-apksigner verify --print-certs big-remote-play-controller-12.2-brpc2.apk
+apksigner verify --print-certs big-remote-play-controller-12.2-brpc3.apk
 ```
+
+Release names follow `12.2-brpcN` (`versionName` in `app/build.gradle`;
+`versionCode` stays upstream's 315). Use `--ks-pass file:<password file>` so the
+password never appears on the command line or in logs.
 
 The release application id is `io.github.bigremoteplay.controller` (the debug
 build adds `.debug`); both can be installed side by side.
