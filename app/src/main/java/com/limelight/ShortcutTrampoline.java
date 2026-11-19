@@ -288,7 +288,6 @@ public class ShortcutTrampoline extends Activity {
         super.onCreate(savedInstanceState);
 
         UiHelper.notifyNewRootView(this);
-        ComputerDatabaseManager dbManager = new ComputerDatabaseManager(this);
         ComputerDetails _computer = null;
 
         // PC arguments, both are optional, but at least one must be provided
@@ -306,7 +305,14 @@ public class ShortcutTrampoline extends Activity {
 
         if (uuidString == null || uuidString.isEmpty()) {
             // Use nameString to find the corresponding UUID
-            _computer = dbManager.getComputerByName(nameString);
+            // Big Remote Play: opened only for this lookup and closed right after
+            // (it used to stay open, and Android reported a leaked SQLite connection).
+            ComputerDatabaseManager dbManager = new ComputerDatabaseManager(this);
+            try {
+                _computer = dbManager.getComputerByName(nameString);
+            } finally {
+                dbManager.close();
+            }
 
             if (_computer == null) {
                 Dialog.displayDialog(ShortcutTrampoline.this,
