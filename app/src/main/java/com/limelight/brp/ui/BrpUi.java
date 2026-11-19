@@ -99,7 +99,7 @@ public final class BrpUi {
      * TalkBack hears it as a checkable control in its current state.
      */
     public static void setToggle(TextView b, CharSequence label, boolean on) {
-        b.setText(on ? "✓ " + label : label);
+        b.setText(on ? b.getContext().getString(com.limelight.R.string.brp_checked, label) : label);
         b.setSelected(on);
         b.setTypeface(on ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
         b.setContentDescription(label);

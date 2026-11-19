@@ -41,6 +41,22 @@ public class ShortcutTrampoline extends Activity {
 
     private ComputerManagerService.ComputerManagerBinder managerBinder;
 
+    // Big Remote Play: the binder only becomes visible once the service is ready (on
+    // another thread); if the activity stops before that, it must still unbind, or
+    // Android reports a leaked ServiceConnection (seen when the screen locks).
+    private boolean bound;
+
+    private synchronized void unbindOnce() {
+        if (managerBinder != null) {
+            managerBinder.stopPolling();
+            managerBinder = null;
+        }
+        if (bound) {
+            bound = false;
+            unbindService(serviceConnection);
+        }
+    }
+
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder binder) {
             final ComputerManagerService.ComputerManagerBinder localBinder =
@@ -53,8 +69,13 @@ public class ShortcutTrampoline extends Activity {
                     // Wait for the binder to be ready
                     localBinder.waitForReady();
 
-                    // Now make the binder visible
-                    managerBinder = localBinder;
+                    // Now make the binder visible, unless the activity already stopped
+                    synchronized (ShortcutTrampoline.this) {
+                        if (!bound) {
+                            return;
+                        }
+                        managerBinder = localBinder;
+                    }
 
                     // Get the computer object
                     computer = managerBinder.getComputer(uuidString);
@@ -70,10 +91,7 @@ public class ShortcutTrampoline extends Activity {
                             blockingLoadSpinner = null;
                         }
 
-                        if (managerBinder != null) {
-                            unbindService(serviceConnection);
-                            managerBinder = null;
-                        }
+                        unbindOnce();
 
                         return;
                     }
@@ -203,11 +221,7 @@ public class ShortcutTrampoline extends Activity {
 
                                         // We don't want any more callbacks from now on, so go ahead
                                         // and unbind from the service
-                                        if (managerBinder != null) {
-                                            managerBinder.stopPolling();
-                                            unbindService(serviceConnection);
-                                            managerBinder = null;
-                                        }
+                                        unbindOnce();
                                     }
                                 });
                             }
@@ -356,7 +370,7 @@ public class ShortcutTrampoline extends Activity {
         }
 
         // Bind to the computer manager service
-        bindService(new Intent(this, ComputerManagerService.class), serviceConnection,
+        bound = bindService(new Intent(this, ComputerManagerService.class), serviceConnection,
                 Service.BIND_AUTO_CREATE);
 
         blockingLoadSpinner = SpinnerDialog.displayDialog(this, getResources().getString(R.string.conn_establishing_title),
@@ -374,11 +388,7 @@ public class ShortcutTrampoline extends Activity {
 
         Dialog.closeDialogs();
 
-        if (managerBinder != null) {
-            managerBinder.stopPolling();
-            unbindService(serviceConnection);
-            managerBinder = null;
-        }
+        unbindOnce();
 
         finish();
     }

@@ -17,6 +17,7 @@ import java.util.List;
  * face buttons small circles. Decorative: the card around it carries the name
  * for TalkBack.
  */
+@android.annotation.SuppressLint("ViewConstructor") // built in code only, from a layout
 public class OscLayoutPreview extends View {
     private final List<OscLayouts.Spec> specs;
     private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);

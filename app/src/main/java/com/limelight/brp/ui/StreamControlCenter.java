@@ -545,7 +545,7 @@ public class StreamControlCenter {
 
     private void refreshStats() {
         StreamStats st = session.stats();
-        subtitle.setText(session.pcName() + " · " + currentScreenName());
+        subtitle.setText(s(R.string.brp_cc_subtitle, session.pcName(), currentScreenName()));
         if (st == null) {
             qualityPill.setText(s(R.string.brp_quality_measuring));
             qualityPill.setTextColor(BrpUi.TEXT_2);
@@ -560,7 +560,7 @@ public class StreamControlCenter {
             default: q = s(R.string.brp_quality_poor); color = BrpUi.BAD; break;
         }
         // The dot repeats the word; the word carries the meaning.
-        qualityPill.setText("● " + q + (st.rttMs > 0 ? " · " + st.rttMs + " ms" : ""));
+        qualityPill.setText(st.rttMs > 0 ? s(R.string.brp_quality_pill_rtt, q, st.rttMs) : s(R.string.brp_quality_pill, q));
         qualityPill.setTextColor(color);
 
         if (vQuality == null) {
@@ -569,7 +569,7 @@ public class StreamControlCenter {
         vQuality.setText(q);
         vQuality.setTextColor(color);
         vLatency.setText(st.rttMs > 0 ? s(R.string.brp_value_rtt, st.rttMs, st.rttVarianceMs) : "—");
-        vResolution.setText(st.width + "×" + st.height);
+        vResolution.setText(s(R.string.brp_value_resolution, st.width, st.height));
         vFps.setText(s(R.string.brp_value_fps, Math.round(st.renderedFps), Math.round(st.receivedFps)));
         vCodec.setText(st.codec != null ? st.codec : "—");
         vDecode.setText(String.format(Locale.getDefault(), "%.1f ms", st.decodeMs));
@@ -677,7 +677,7 @@ public class StreamControlCenter {
             boolean on = all[i].key.equals(current);
             card.setSelected(on);
             name.setTypeface(on ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-            name.setText(on ? "✓ " + s(names[i]) : s(names[i]));
+            name.setText(on ? s(R.string.brp_checked, s(names[i])) : s(names[i]));
             card.setContentDescription(s(names[i]));
             if (on) {
                 layoutNote.setText(s(notes[i]));
@@ -696,7 +696,7 @@ public class StreamControlCenter {
                     boolean sel = j == idx;
                     cards[j].setSelected(sel);
                     TextView n = (TextView) cards[j].getChildAt(1);
-                    n.setText(sel ? "✓ " + s(names[j]) : s(names[j]));
+                    n.setText(sel ? s(R.string.brp_checked, s(names[j])) : s(names[j]));
                     n.setTypeface(sel ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
                 }
                 layoutNote.setText(s(notes[idx]));
@@ -725,7 +725,7 @@ public class StreamControlCenter {
         note(s(R.string.brp_osc_edit_note));
 
         heading(R.string.brp_osc_opacity);
-        final TextView value = BrpUi.text(activity, session.onScreenControllerOpacity() + " %", 15, BrpUi.TEXT);
+        final TextView value = BrpUi.text(activity, s(R.string.brp_value_percent, session.onScreenControllerOpacity()), 15, BrpUi.TEXT);
         content.addView(value);
         SeekBar bar = new SeekBar(activity);
         bar.setMax(100);
@@ -736,7 +736,7 @@ public class StreamControlCenter {
             @Override
             public void onProgressChanged(SeekBar sb, int p, boolean fromUser) {
                 int v = Math.max(10, p);
-                value.setText(v + " %");
+                value.setText(s(R.string.brp_value_percent, v));
                 if (fromUser) {
                     session.setOnScreenControllerOpacity(v);
                 }
@@ -830,7 +830,7 @@ public class StreamControlCenter {
         StreamStats st = session.stats();
         heading(R.string.brp_video_now);
         note(st == null ? s(R.string.brp_quality_measuring)
-                : s(R.string.brp_video_now_value, st.width + "×" + st.height, Math.round(st.renderedFps),
+                : s(R.string.brp_video_now_value, s(R.string.brp_value_resolution, st.width, st.height), Math.round(st.renderedFps),
                 st.codec != null ? st.codec : "—", QualityPresets.formatMbps(session.bitrateKbps()),
                 st.decoderName != null ? st.decoderName : "—"));
 

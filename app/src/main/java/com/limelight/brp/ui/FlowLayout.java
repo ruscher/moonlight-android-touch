@@ -15,6 +15,11 @@ public class FlowLayout extends ViewGroup {
     /** When set, every child gets this width (columns), bounded by the row width. */
     private int childWidth = 0;
 
+    public FlowLayout(Context c) {
+        this(c, Math.round(8 * c.getResources().getDisplayMetrics().density),
+                Math.round(8 * c.getResources().getDisplayMetrics().density));
+    }
+
     public FlowLayout(Context c, int hGapPx, int vGapPx) {
         super(c);
         this.hGap = hGapPx;

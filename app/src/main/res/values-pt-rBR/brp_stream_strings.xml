@@ -26,7 +26,7 @@
     <string name="brp_stat_drops">Quadros perdidos na rede</string>
     <string name="brp_stat_host_latency">Tempo de codificação no computador</string>
     <string name="brp_value_rtt">%1$d ms (± %2$d)</string>
-    <string name="brp_value_fps">%1$d FPS (%2$d recebidos)</string>
+    <string name="brp_value_fps">%1$d FPS (recebidos: %2$d)</string>
     <string name="brp_value_not_reported">Não informado</string>
 
     <string name="brp_quick_actions">Ações rápidas</string>
@@ -52,10 +52,11 @@
     <string name="brp_kbd_type_clipboard">Digitar o texto copiado no celular</string>
     <plurals name="brp_kbd_typed_n">
         <item quantity="one">%1$d caractere digitado</item>
+        <item quantity="many">%1$d caracteres digitados</item>
         <item quantity="other">%1$d caracteres digitados</item>
     </plurals>
     <string name="brp_kbd_clipboard_empty">Nada copiado no celular</string>
-    <string name="brp_kbd_clipboard_partial">%1$d caracteres digitados; %2$d ficaram de fora (emoji, caracteres de controle ou além do limite de 2000).</string>
+    <string name="brp_kbd_clipboard_partial">Caracteres digitados: %1$d. Ficaram de fora: %2$d (emoji, caracteres de controle ou além do limite de 2000).</string>
     <string name="brp_kbd_clipboard_note">O texto é digitado onde está o cursor no computador. Ctrl+V cola o que foi copiado no computador.</string>
     <string name="brp_kbd_modifiers">Ctrl, Alt, Shift e Win</string>
     <string name="brp_kbd_mod_latch">Tocar para travar</string>

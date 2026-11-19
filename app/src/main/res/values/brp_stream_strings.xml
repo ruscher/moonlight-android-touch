@@ -28,7 +28,7 @@
     <string name="brp_stat_drops">Frames lost on the network</string>
     <string name="brp_stat_host_latency">Computer encoding time</string>
     <string name="brp_value_rtt">%1$d ms (± %2$d)</string>
-    <string name="brp_value_fps">%1$d FPS (%2$d received)</string>
+    <string name="brp_value_fps">%1$d FPS (received: %2$d)</string>
     <string name="brp_value_not_reported">Not reported</string>
 
     <string name="brp_quick_actions">Quick actions</string>
@@ -58,7 +58,7 @@
         <item quantity="other">Typed %1$d characters</item>
     </plurals>
     <string name="brp_kbd_clipboard_empty">Nothing copied on the phone</string>
-    <string name="brp_kbd_clipboard_partial">Typed %1$d characters; %2$d left out (emoji, control characters or past the 2000-character limit).</string>
+    <string name="brp_kbd_clipboard_partial">Characters typed: %1$d. Left out: %2$d (emoji, control characters or past the 2000-character limit).</string>
     <string name="brp_kbd_clipboard_note">The text is typed where the cursor is on the computer. Ctrl+V pastes what was copied on the computer instead.</string>
     <string name="brp_kbd_modifiers">Ctrl, Alt, Shift and Win</string>
     <string name="brp_kbd_mod_latch">Tap to lock</string>
@@ -142,4 +142,10 @@
     <string name="brp_osc_layout_classic_note">Moonlight\'s original layout, with the changes you saved in it.</string>
     <string name="brp_osc_reset">Reset this layout</string>
     <string name="brp_osc_reset_confirm">Tap again to undo your moves in this layout</string>
+    <string name="brp_cc_subtitle">%1$s · %2$s</string>
+    <string name="brp_quality_pill">● %1$s</string>
+    <string name="brp_quality_pill_rtt">● %1$s · %2$d ms</string>
+    <string name="brp_value_resolution">%1$d×%2$d</string>
+    <string name="brp_value_percent">%1$d %%</string>
+    <string name="brp_checked">✓ %1$s</string>
 </resources>

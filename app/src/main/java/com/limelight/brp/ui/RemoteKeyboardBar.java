@@ -95,8 +95,10 @@ public class RemoteKeyboardBar {
         }
     }
 
-    @android.annotation.TargetApi(Build.VERSION_CODES.R)
     private void followImeInsets() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            return;
+        }
         root.setOnApplyWindowInsetsListener((v, insets) -> {
             int ime = insets.getInsets(WindowInsets.Type.ime()).bottom;
             int nav = insets.getInsets(WindowInsets.Type.navigationBars()).bottom;
