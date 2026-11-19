@@ -1,0 +1,9 @@
+<resources>
+    <!-- API 27: navigation bar icons can be dark too -->
+    <style name="Brp.Base.V27" parent="Brp.Base.V23">
+        <item name="android:navigationBarColor">@color/brp_window</item>
+        <item name="android:windowLightNavigationBar">@bool/brp_light_bars</item>
+    </style>
+
+    <style name="Brp.Base" parent="Brp.Base.V27" />
+</resources>

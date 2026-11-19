@@ -1,0 +1,10 @@
+<resources>
+    <!-- API 23: status bar icons can be dark, so the bar takes the window colour -->
+    <style name="Brp.Base.V23" parent="Brp.Base.V21">
+        <item name="android:statusBarColor">@color/brp_window</item>
+        <item name="android:windowLightStatusBar">@bool/brp_light_bars</item>
+        <item name="android:colorBackgroundFloating">@color/brp_surface_elevated</item>
+    </style>
+
+    <style name="Brp.Base" parent="Brp.Base.V23" />
+</resources>

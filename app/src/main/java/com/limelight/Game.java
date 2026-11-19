@@ -95,7 +95,7 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     private int lastButtonState = 0;
 
     // Only 2 touches are supported
-    private final TouchContext[] touchContextMap = new TouchContext[2];
+    final TouchContext[] touchContextMap = new TouchContext[2];
     private long threeFingerDownTime = 0;
 
     private static final int REFERENCE_HORIZ_RES = 1280;
@@ -109,30 +109,30 @@ public class Game extends Activity implements SurfaceHolder.Callback,
 
     private static final int THREE_FINGER_TAP_THRESHOLD = 300;
 
-    private ControllerHandler controllerHandler;
+    ControllerHandler controllerHandler;
     private KeyboardTranslator keyboardTranslator;
-    private VirtualController virtualController;
+    VirtualController virtualController;
 
-    private PreferenceConfiguration prefConfig;
+    PreferenceConfiguration prefConfig;
     private SharedPreferences tombstonePrefs;
 
-    private NvConnection conn;
+    NvConnection conn;
     private SpinnerDialog spinner;
-    private boolean displayedFailureDialog = false;
+    boolean displayedFailureDialog = false;
     private boolean connecting = false;
-    private boolean connected = false;
+    volatile boolean connected = false;
     private boolean autoEnterPip = false;
     private boolean surfaceCreated = false;
     private boolean attemptedConnection = false;
     private int suppressPipRefCount = 0;
-    private String pcName;
+    String pcName;
     private String appName;
-    private NvApp app;
+    NvApp app;
     private float desiredRefreshRate;
 
     private InputCaptureProvider inputCaptureProvider;
     private int modifierFlags = 0;
-    private boolean grabbedInput = true;
+    boolean grabbedInput = true;
 
     // Native multi-touch (Big Remote Play): pointers whose DOWN reached the host
     // and are not yet released there. Used to cancel exactly those when Android
@@ -142,18 +142,23 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     private boolean cursorVisible = false;
     private boolean waitingForAllModifiersUp = false;
     private int specialKeyCode = KeyEvent.KEYCODE_UNKNOWN;
-    private StreamView streamView;
+    StreamView streamView;
     private long lastAbsTouchUpTime = 0;
     private long lastAbsTouchDownTime = 0;
     private float lastAbsTouchUpX, lastAbsTouchUpY;
     private float lastAbsTouchDownX, lastAbsTouchDownY;
 
-    private boolean isHidingOverlays;
+    boolean isHidingOverlays;
     private TextView notificationOverlayView;
     private int requestedNotificationOverlayVisibility = View.GONE;
-    private TextView performanceOverlayView;
+    TextView performanceOverlayView;
 
-    private MediaCodecDecoderRenderer decoderRenderer;
+    MediaCodecDecoderRenderer decoderRenderer;
+
+    // Big Remote Play: Control Center, key bar, overlays, controlled reconnects.
+    private BrpStreamController brp;
+    private Intent pendingRelaunch;
+    private android.app.AlertDialog connectionLostDialog;
     private boolean reportedCrash;
 
     private WifiManager.WifiLock highPerfWifiLock;
@@ -218,7 +223,9 @@ public class Game extends Activity implements SurfaceHolder.Callback,
         setContentView(R.layout.activity_game);
 
         // Start the spinner
-        spinner = SpinnerDialog.displayDialog(this, getResources().getString(R.string.conn_establishing_title),
+        String brpReason = getIntent().getStringExtra(BrpStreamController.EXTRA_REASON);
+        spinner = SpinnerDialog.displayDialog(this,
+                brpReason != null ? brpReason : getResources().getString(R.string.conn_establishing_title),
                 getResources().getString(R.string.conn_establishing_msg), true);
 
         // Read the stream preferences
@@ -530,6 +537,8 @@ public class Game extends Activity implements SurfaceHolder.Callback,
             virtualController.show();
         }
 
+        brp = new BrpStreamController(this, host, port, httpsPort, uniqueId, serverCert);
+
         if (prefConfig.usbDriver) {
             // Start the USB driver
             bindService(new Intent(this, UsbDriverService.class),
@@ -602,6 +611,14 @@ public class Game extends Activity implements SurfaceHolder.Callback,
             // Refresh layout of OSC for possible new screen size
             virtualController.refreshLayout();
         }
+
+        // Big Remote Play: nothing stays pressed across a rotation; menus close in PiP.
+        // (Run after the PiP state below has been applied.)
+        streamView.post(() -> {
+            if (brp != null) {
+                brp.onConfigurationChanged();
+            }
+        });
 
         // Hide on-screen overlays in PiP mode
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -767,6 +784,9 @@ public class Game extends Activity implements SurfaceHolder.Callback,
         // stay pressed on the host: release them there.
         if (!hasFocus) {
             cancelAllNativeTouches();
+            if (brp != null) {
+                brp.releaseHeldKeys();
+            }
         }
 
         // With Android native pointer capture, capture is lost when focus is lost,
@@ -1025,7 +1045,7 @@ public class Game extends Activity implements SurfaceHolder.Callback,
             }
     };
 
-    private void hideSystemUi(int delay) {
+    void hideSystemUi(int delay) {
         Handler h = getWindow().getDecorView().getHandler();
         if (h != null) {
             h.removeCallbacks(hideSystemUi);
@@ -1058,6 +1078,19 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if (connectionLostDialog != null) {
+            connectionLostDialog.dismiss();
+            connectionLostDialog = null;
+        }
+        if (pendingRelaunch != null) {
+            // The relaunch reached this (finishing, singleTask) instance instead
+            // of creating a new one: start it now that this one is gone.
+            Intent i = pendingRelaunch;
+            pendingRelaunch = null;
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(i);
+        }
 
         if (controllerHandler != null) {
             controllerHandler.destroy();
@@ -1111,6 +1144,9 @@ public class Game extends Activity implements SurfaceHolder.Callback,
 
         // Release every finger on the host before the connection goes away.
         cancelAllNativeTouches();
+        if (brp != null) {
+            brp.onStreamStopping();
+        }
 
         if (conn != null) {
             int videoFormat = decoderRenderer.getActiveVideoFormat();
@@ -1173,7 +1209,7 @@ public class Game extends Activity implements SurfaceHolder.Callback,
         finish();
     }
 
-    private void setInputGrabState(boolean grab) {
+    void setInputGrabState(boolean grab) {
         // Grab/ungrab the mouse cursor
         if (grab) {
             inputCaptureProvider.enableCapture();
@@ -1342,7 +1378,70 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     }
 
     private byte getModifierState() {
-        return (byte) modifierFlags;
+        return (byte) (modifierFlags | (brp != null ? brp.keyboardModifierFlags() : 0));
+    }
+
+    // ---------------------------------------------------------------- Big Remote Play
+
+    @Override
+    public void onBackPressed() {
+        if (brp != null && connected && brp.onBack()) {
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (isFinishing()) {
+            pendingRelaunch = intent;
+        }
+    }
+
+    /** Controlled reconnect: this stream is already stopped; start the next one. */
+    void relaunchWith(Intent intent) {
+        if (isFinishing() || isDestroyed()) {
+            return; // the person left while the old stream was stopping
+        }
+        finish();
+        startActivity(intent);
+    }
+
+    void enterPip() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
+                enterPictureInPictureMode(getPictureInPictureParams(false));
+            } catch (Exception e) {
+                LimeLog.warning("PiP failed: " + e);
+            }
+        }
+    }
+
+    private void showConnectionLost(String message) {
+        StringBuilder text = new StringBuilder(message);
+        com.limelight.brp.StreamStats st = decoderRenderer != null ? decoderRenderer.getLatestStats() : null;
+        if (st != null && android.os.SystemClock.uptimeMillis() - st.timestampMs < 15000) {
+            text.append("\n\n").append(getString(R.string.brp_lost_last_measured,
+                    st.rttMs, String.format(Locale.getDefault(), "%.1f", st.networkDropPercent),
+                    Math.round(st.renderedFps)));
+        }
+        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this)
+                .setTitle(R.string.conn_terminated_title)
+                .setMessage(text)
+                .setPositiveButton(R.string.brp_session_reconnect, (d, w) -> {
+                    connectionLostDialog = null;
+                    brp.reconnect();
+                })
+                .setNegativeButton(R.string.brp_lost_close, (d, w) -> finish())
+                .setOnCancelListener(d -> finish());
+        if (prefConfig.bitrate > 1500) {
+            b.setNeutralButton(R.string.brp_action_lower_quality, (d, w) -> {
+                connectionLostDialog = null;
+                brp.lowerQualityAndReconnect();
+            });
+        }
+        connectionLostDialog = b.show();
     }
 
     @Override
@@ -1355,6 +1454,11 @@ public class Game extends Activity implements SurfaceHolder.Callback,
         // Pass-through virtual navigation keys
         if ((event.getFlags() & KeyEvent.FLAG_VIRTUAL_HARD_KEY) != 0) {
             return false;
+        }
+
+        // Big Remote Play: the Control Center owns key presses while it is open.
+        if (brp != null && brp.isControlCenterOpen()) {
+            return brp.handleMenuKeyDown(event);
         }
 
         // Handle a synthetic back button event that some Android OS versions
@@ -1852,7 +1956,7 @@ public class Game extends Activity implements SurfaceHolder.Callback,
         return true;
     }
 
-    private void cancelAllNativeTouches() {
+    void cancelAllNativeTouches() {
         if (nativeTouchPointers.size() == 0 || conn == null) {
             nativeTouchPointers.clear();
             return;
@@ -2373,7 +2477,40 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     public void stageComplete(String stage) {
     }
 
-    private void stopConnection() {
+    private Thread stopThread;
+
+    /** Releases only the mouse pointer capture; key and joystick events keep flowing. */
+    void setPointerCaptureForMenu(boolean capture) {
+        if (capture) {
+            inputCaptureProvider.enableCapture();
+            if (cursorVisible) {
+                inputCaptureProvider.showCursor();
+            }
+        } else {
+            inputCaptureProvider.disableCapture();
+        }
+    }
+
+    /**
+     * Big Remote Play: stops the stream and runs {@code then} on the UI thread
+     * once the host has been told the session ended, so a reconnect never
+     * launches while the old session still counts on the server.
+     */
+    void stopConnectionThen(final Runnable then) {
+        stopConnection();
+        final Thread pending = stopThread;
+        new Thread(() -> {
+            if (pending != null) {
+                try {
+                    pending.join(5000);
+                } catch (InterruptedException ignored) {
+                }
+            }
+            runOnUiThread(then);
+        }, "BRP wait for stop").start();
+    }
+
+    void stopConnection() {
         if (connecting || connected) {
             connecting = connected = false;
             updatePipAutoEnter();
@@ -2388,11 +2525,12 @@ public class Game extends Activity implements SurfaceHolder.Callback,
             // thread to keep things smooth for the UI. Inside moonlight-common,
             // we prevent another thread from starting a connection before and
             // during the process of stopping this one.
-            new Thread() {
+            stopThread = new Thread() {
                 public void run() {
                     conn.stop();
                 }
-            }.start();
+            };
+            stopThread.start();
         }
     }
 
@@ -2452,6 +2590,10 @@ public class Game extends Activity implements SurfaceHolder.Callback,
                 // Stop processing controller input
                 controllerHandler.stop();
 
+                if (brp != null) {
+                    brp.onStreamStopping();
+                }
+
                 // Ungrab input
                 setInputGrabState(false);
 
@@ -2508,8 +2650,9 @@ public class Game extends Activity implements SurfaceHolder.Callback,
                                     MoonBridge.stringifyPortFlags(portFlags, "\n");
                         }
 
-                        Dialog.displayDialog(Game.this, getResources().getString(R.string.conn_terminated_title),
-                                message, true);
+                        // Big Remote Play: say what was last measured and offer to
+                        // reconnect (or reconnect with lower quality) right here.
+                        showConnectionLost(message);
                     }
                     else {
                         finish();
@@ -2569,6 +2712,10 @@ public class Game extends Activity implements SurfaceHolder.Callback,
                     conn.sendTouchEvent(MoonBridge.LI_TOUCH_EVENT_CANCEL_ALL, 0, 0, 0, 0, 0, 0, MoonBridge.LI_ROT_UNKNOWN);
                 }
                 updateNativeTouchGestureExclusion();
+
+                if (brp != null) {
+                    brp.onConnected();
+                }
 
                 // Hide the mouse cursor now after a short delay.
                 // Doing it before dismissing the spinner seems to be undone

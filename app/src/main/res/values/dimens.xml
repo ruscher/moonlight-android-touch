@@ -6,4 +6,16 @@
     <dimen name="tv_channel_logo_width">80dp</dimen>
     <dimen name="tv_channel_logo_height">80dp</dimen>
 
+    <!-- Big Remote Play look (BRP-UI.md) -->
+    <dimen name="brp_radius_card">16dp</dimen>
+    <dimen name="brp_radius_button">12dp</dimen>
+    <dimen name="brp_radius_dialog">22dp</dimen>
+    <dimen name="brp_focus_ring">3dp</dimen>
+    <dimen name="brp_touch_target">48dp</dimen>
+    <dimen name="brp_page_padding">16dp</dimen>
+    <dimen name="brp_grid_spacing">12dp</dimen>
+    <dimen name="brp_pc_column_width">300dp</dimen>
+    <!-- Side padding of single-column content (empty state, add computer) -->
+    <dimen name="brp_content_side_padding">16dp</dimen>
+
 </resources>

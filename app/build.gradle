@@ -11,8 +11,9 @@ android {
         minSdk 21
         targetSdk 36
 
-        // Big Remote Play Touch: upstream 12.2 + native multi-touch (see BRP-TOUCH.md)
-        versionName "12.2-brpc2"
+        // Big Remote Play Controller: upstream 12.2 + native multi-touch + the Big Remote
+        // Play look (see BRP-TOUCH.md and BRP-UI.md). Bump the -brpcN suffix per release.
+        versionName "12.2-brpc3"
         versionCode = 315
 
         // Generate native debug symbols to allow Google Play to symbolicate our native crashes
@@ -153,4 +154,7 @@ dependencies {
     implementation 'com.github.cgutman:ShieldControllerExtensions:1.0.1'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+
+    // Unit tests only (app/src/test); not part of the APK
+    testImplementation 'junit:junit:4.13.2'
 }

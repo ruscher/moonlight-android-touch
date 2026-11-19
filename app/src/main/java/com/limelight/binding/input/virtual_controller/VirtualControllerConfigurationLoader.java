@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.DisplayMetrics;
 
+import com.limelight.brp.OscLayouts;
 import com.limelight.nvstream.input.ControllerPacket;
 import com.limelight.preferences.PreferenceConfiguration;
 
@@ -189,10 +190,59 @@ public class VirtualControllerConfigurationLoader {
     private static final int GUIDE_X = START_X-BACK_X;
     private static final int GUIDE_Y = START_BACK_Y;
 
+    /** Big Remote Play: which layout is chosen (default preferences, key {@link #LAYOUT_PREF}). */
+    public static final String LAYOUT_PREF = "brp_osc_layout";
+
+    public static OscLayouts.Layout currentLayout(Context context) {
+        SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        String key = prefs.getString(LAYOUT_PREF, null);
+        if (key == null) {
+            // Someone who already moved buttons in the original layout keeps it;
+            // everyone else starts with the new Pad layout.
+            boolean editedClassic = !context.getSharedPreferences(OSC_PREFERENCE, Activity.MODE_PRIVATE).getAll().isEmpty();
+            return editedClassic ? OscLayouts.Layout.CLASSIC : OscLayouts.Layout.PAD;
+        }
+        return OscLayouts.Layout.fromKey(key, OscLayouts.Layout.PAD);
+    }
+
+    public static void setLayout(Context context, OscLayouts.Layout layout) {
+        android.preference.PreferenceManager.getDefaultSharedPreferences(context)
+                .edit().putString(LAYOUT_PREF, layout.key).apply();
+    }
+
+    /** Forgets the moves and resizes saved for one layout. */
+    public static void resetLayout(Context context, OscLayouts.Layout layout) {
+        context.getSharedPreferences(layout.prefsName, Activity.MODE_PRIVATE).edit().clear().apply();
+    }
+
+    private static void createFromSpecs(final VirtualController controller, final Context context,
+                                        PreferenceConfiguration config, OscLayouts.Layout layout) {
+        int w = controller.layoutWidth(), h = controller.layoutHeight();
+        for (OscLayouts.Spec s : OscLayouts.specs(layout, config.flipFaceButtons, config.showGuideButton)) {
+            VirtualControllerElement e;
+            switch (s.kind) {
+                case DPAD: e = createDigitalPad(controller, context); break;
+                case LEFT_STICK: e = createLeftStick(controller, context); break;
+                case RIGHT_STICK: e = createRightStick(controller, context); break;
+                case LEFT_TRIGGER: e = createLeftTrigger(s.layer, s.label, -1, controller, context); break;
+                case RIGHT_TRIGGER: e = createRightTrigger(s.layer, s.label, -1, controller, context); break;
+                default: e = createDigitalButton(s.id, s.flag, 0, s.layer, s.label, -1, controller, context); break;
+            }
+            controller.addElement(e, s.leftPx(w, h), s.topPx(h), s.widthPx(h), s.heightPx(h));
+        }
+        controller.setOpacity(config.oscOpacity);
+    }
+
     public static void createDefaultLayout(final VirtualController controller, final Context context) {
 
         DisplayMetrics screen = context.getResources().getDisplayMetrics();
         PreferenceConfiguration config = PreferenceConfiguration.readPreferences(context);
+
+        OscLayouts.Layout layout = currentLayout(context);
+        if (!config.onlyL3R3 && layout != OscLayouts.Layout.CLASSIC) {
+            createFromSpecs(controller, context, config, layout);
+            return;
+        }
 
         // Displace controls on the right by this amount of pixels to account for different aspect ratios
         int rightDisplacement = screen.widthPixels - screen.heightPixels * 16 / 9;
@@ -350,9 +400,17 @@ public class VirtualControllerConfigurationLoader {
         controller.setOpacity(config.oscOpacity);
     }
 
+    /** Each layout keeps its own edits; "L3/R3 only" and Classic use upstream's file. */
+    private static String prefsFor(Context context) {
+        if (PreferenceConfiguration.readPreferences(context).onlyL3R3) {
+            return OSC_PREFERENCE;
+        }
+        return currentLayout(context).prefsName;
+    }
+
     public static void saveProfile(final VirtualController controller,
                                    final Context context) {
-        SharedPreferences.Editor prefEditor = context.getSharedPreferences(OSC_PREFERENCE, Activity.MODE_PRIVATE).edit();
+        SharedPreferences.Editor prefEditor = context.getSharedPreferences(prefsFor(context), Activity.MODE_PRIVATE).edit();
 
         for (VirtualControllerElement element : controller.getElements()) {
             String prefKey = ""+element.elementId;
@@ -367,7 +425,7 @@ public class VirtualControllerConfigurationLoader {
     }
 
     public static void loadFromPreferences(final VirtualController controller, final Context context) {
-        SharedPreferences pref = context.getSharedPreferences(OSC_PREFERENCE, Activity.MODE_PRIVATE);
+        SharedPreferences pref = context.getSharedPreferences(prefsFor(context), Activity.MODE_PRIVATE);
 
         for (VirtualControllerElement element : controller.getElements()) {
             String prefKey = ""+element.elementId;

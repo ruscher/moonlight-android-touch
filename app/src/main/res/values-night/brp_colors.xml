@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Big Remote Play palette, dark (the desktop Gamer palette). -->
+<resources>
+    <color name="brp_window">#151A35</color>
+    <color name="brp_surface">#232846</color>
+    <color name="brp_surface_elevated">#2A2F50</color>
+    <color name="brp_text">#ECEEFF</color>
+    <color name="brp_text_secondary">#B8BDDA</color>
+    <color name="brp_accent">#835DFF</color>
+    <color name="brp_accent_text">#A48BFF</color>
+    <color name="brp_chip">#33835DFF</color>
+    <color name="brp_chip_neutral">#1FFFFFFF</color>
+    <color name="brp_focus">#22D3EE</color>
+    <color name="brp_outline">#1FFFFFFF</color>
+    <color name="brp_ripple">#24FFFFFF</color>
+    <color name="brp_status_online">#8FF0A4</color>
+    <color name="brp_status_attention">#F8E45C</color>
+    <color name="brp_status_offline">#B8BDDA</color>
+    <color name="brp_status_playing">#22D3EE</color>
+    <bool name="brp_light_bars">false</bool>
+</resources>

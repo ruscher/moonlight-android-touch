@@ -23,6 +23,8 @@ public class PosterContentProvider extends ContentProvider {
     public static final int COMPUTER_UUID_PATH_INDEX = 1;
     private DiskAssetLoader mDiskAssetLoader;
 
+    private static final java.util.regex.Pattern SAFE_UUID = java.util.regex.Pattern.compile("[A-Za-z0-9-]{1,64}");
+    private static final java.util.regex.Pattern SAFE_APP_ID = java.util.regex.Pattern.compile("-?[0-9]{1,10}");
     private static final UriMatcher sUriMatcher;
     private static final String BOXART_PATH = "boxart";
     private static final int BOXART_URI_ID = 1;
@@ -53,6 +55,11 @@ public class PosterContentProvider extends ContentProvider {
         }
         String appId = segments.get(APP_ID_PATH_INDEX);
         String uuid = segments.get(COMPUTER_UUID_PATH_INDEX);
+        // Exported for the Android TV launcher: only a computer UUID and a numeric
+        // app id may reach the file path (no "..", no encoded slashes).
+        if (!SAFE_UUID.matcher(uuid).matches() || !SAFE_APP_ID.matcher(appId).matches()) {
+            throw new FileNotFoundException();
+        }
         File file = mDiskAssetLoader.getFile(uuid, Integer.parseInt(appId));
         if (file.exists()) {
             return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);

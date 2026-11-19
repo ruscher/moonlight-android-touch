@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="brp_cc_open">Abrir o menu da transmissão</string>
+    <string name="brp_cc_close">Fechar o menu da transmissão</string>
+
+    <string name="brp_tab_quick">Rápido</string>
+    <string name="brp_tab_keyboard">Teclado</string>
+    <string name="brp_tab_controller">Controle</string>
+    <string name="brp_tab_display">Tela</string>
+    <string name="brp_tab_video">Vídeo</string>
+    <string name="brp_tab_session">Sessão</string>
+
+    <string name="brp_quality_measuring">Medindo…</string>
+    <string name="brp_quality_excellent">Excelente</string>
+    <string name="brp_quality_good">Boa</string>
+    <string name="brp_quality_fair">Instável</string>
+    <string name="brp_quality_poor">Ruim</string>
+
+    <string name="brp_stat_connection">Conexão</string>
+    <string name="brp_stat_network_latency">Latência da rede</string>
+    <string name="brp_stat_resolution">Resolução</string>
+    <string name="brp_stat_fps">Quadros por segundo</string>
+    <string name="brp_stat_codec">Codec</string>
+    <string name="brp_stat_bitrate">Taxa de bits (ajuste)</string>
+    <string name="brp_stat_decode">Tempo de decodificação</string>
+    <string name="brp_stat_drops">Quadros perdidos na rede</string>
+    <string name="brp_stat_host_latency">Tempo de codificação no computador</string>
+    <string name="brp_value_rtt">%1$d ms (± %2$d)</string>
+    <string name="brp_value_fps">%1$d FPS (recebidos: %2$d)</string>
+    <string name="brp_value_not_reported">Não informado</string>
+
+    <string name="brp_quick_actions">Ações rápidas</string>
+    <string name="brp_stat_heading">Esta transmissão</string>
+    <string name="brp_action_keyboard">Teclado</string>
+    <string name="brp_action_controller">Controle na tela</string>
+    <string name="brp_action_statistics_mode">Estatísticas: %1$s</string>
+    <string name="brp_action_switch_screen">Trocar de tela</string>
+    <string name="brp_action_stretch">Esticar para preencher</string>
+    <string name="brp_action_lower_quality">Baixar a qualidade e reconectar</string>
+    <string name="brp_action_disconnect">Desconectar</string>
+    <string name="brp_quick_note_disconnect">Desconectar deixa aberto o que está rodando no computador; dá para voltar depois.</string>
+    <string name="brp_confirm_reconnect">Toque de novo para reconectar</string>
+
+    <string name="brp_perf_off">Desligadas</string>
+    <string name="brp_perf_minimal">Mínimas</string>
+    <string name="brp_perf_detailed">Detalhadas</string>
+
+    <string name="brp_kbd_phone_keyboard">Abrir o teclado do celular</string>
+    <string name="brp_kbd_extra_keys">Barra de teclas extras</string>
+    <string name="brp_kbd_function_keys">Teclas de função F1 a F24</string>
+    <string name="brp_kbd_hide_bar">Esconder a barra de teclas extras</string>
+    <string name="brp_kbd_type_clipboard">Digitar o texto copiado no celular</string>
+    <plurals name="brp_kbd_typed_n">
+        <item quantity="one">%1$d caractere digitado</item>
+        <item quantity="many">%1$d caracteres digitados</item>
+        <item quantity="other">%1$d caracteres digitados</item>
+    </plurals>
+    <string name="brp_kbd_clipboard_empty">Nada copiado no celular</string>
+    <string name="brp_kbd_clipboard_partial">Caracteres digitados: %1$d. Ficaram de fora: %2$d (emoji, caracteres de controle ou além do limite de 2000).</string>
+    <string name="brp_kbd_clipboard_note">O texto é digitado onde está o cursor no computador. Ctrl+V cola o que foi copiado no computador.</string>
+    <string name="brp_kbd_modifiers">Ctrl, Alt, Shift e Win</string>
+    <string name="brp_kbd_mod_latch">Tocar para travar</string>
+    <string name="brp_kbd_mod_hold">Segurar enquanto toca</string>
+    <string name="brp_kbd_modifiers_note">Teclas travadas aparecem preenchidas e em maiúsculas. Elas são soltas ao fechar a barra, abrir este menu, girar a tela ou terminar a transmissão.</string>
+    <string name="brp_kbd_shortcuts">Atalhos</string>
+    <string name="brp_kbd_shortcuts_note">Enviados ao computador como teclas de verdade.</string>
+    <string name="brp_kbd_sent">%1$s enviado</string>
+    <string name="brp_key_left">Seta para a esquerda</string>
+    <string name="brp_key_right">Seta para a direita</string>
+    <string name="brp_key_up">Seta para cima</string>
+    <string name="brp_key_down">Seta para baixo</string>
+    <string name="brp_key_space">Espaço</string>
+
+    <string name="brp_osc_show">Mostrar o controle neste celular</string>
+    <string name="brp_osc_edit">Editar o layout</string>
+    <string name="brp_osc_edit_note">Editar o layout: arraste os botões para movê-los; toque na engrenagem no canto superior esquerdo para redimensionar e de novo para salvar.</string>
+    <string name="brp_osc_opacity">Opacidade do controle</string>
+    <string name="brp_osc_which">Qual controle usar</string>
+    <string name="brp_osc_two_controllers_touch_on">Este app também envia cada dedo ao computador, então os Controles de toque do Big Remote Play (desenhados pelo computador) também funcionam. Use um dos dois: com os dois, o jogo vê dois controles. Na Janela de Jogo, use o controle deste celular.</string>
+    <string name="brp_osc_two_controllers_touch_off">O toque é enviado como mouse (o toque nativo está desligado nas Configurações), então os Controles de toque do computador não funcionam; use o controle deste celular.</string>
+    <string name="brp_osc_more_in_settings">Botões exibidos, vibração e zona morta do analógico ficam nas Configurações e valem na próxima transmissão.</string>
+
+    <string name="brp_display_current">Transmitindo agora</string>
+    <string name="brp_display_screens">Telas do computador</string>
+    <string name="brp_display_loading">Lendo as entradas do computador…</string>
+    <string name="brp_display_unreadable">Não foi possível ler as entradas do computador. A transmissão continua funcionando.</string>
+    <string name="brp_display_single">O computador oferece uma tela. Com duas ou mais, o Big Remote Play cria uma entrada por tela (Compartilhar → Preferências → Entradas do Moonlight).</string>
+    <string name="brp_display_switch_note">Trocar reconecta na entrada da tela escolhida, mantendo seus ajustes.</string>
+    <string name="brp_display_other_entries">Outras entradas</string>
+    <string name="brp_display_desktop_low_note">Desktop Low limita a taxa de bits no computador: use quando a conexão estiver lenta.</string>
+    <string name="brp_display_picture">Imagem</string>
+    <string name="brp_display_fit">Ajustar (faixas pretas)</string>
+    <string name="brp_display_stretch">Esticar para preencher</string>
+    <string name="brp_confirm_switch_closes">Toque de novo: isso fecha %1$s no computador</string>
+
+    <string name="brp_video_now">Esta transmissão</string>
+    <string name="brp_video_now_value">%1$s · %2$d FPS · %3$s · %4$s\nDecodificador: %5$s</string>
+    <string name="brp_video_bitrate">Taxa de bits</string>
+    <string name="brp_preset_data_saver">Economia de dados</string>
+    <string name="brp_preset_balanced">Equilibrada</string>
+    <string name="brp_preset_high">Alta</string>
+    <string name="brp_preset_ultra">Ultra</string>
+    <string name="brp_video_resolution">Resolução</string>
+    <string name="brp_video_native">Esta tela</string>
+    <string name="brp_video_fps">Quadros por segundo</string>
+    <string name="brp_video_codec">Codec</string>
+    <string name="brp_video_codec_auto">Automático</string>
+    <string name="brp_video_no_av1">Este aparelho não tem decodificador AV1.</string>
+    <string name="brp_video_reconnect_note">Exige reconectar: o computador fixa estes valores ao iniciar a transmissão. Aplicar salva como seus ajustes e reconecta.</string>
+    <string name="brp_video_apply">Aplicar e reconectar</string>
+
+    <string name="brp_session_resume">Voltar ao jogo</string>
+    <string name="brp_session_reconnect">Reconectar</string>
+    <string name="brp_session_quit">Fechar no computador</string>
+    <string name="brp_confirm_quit">Toque de novo para fechar %1$s</string>
+    <string name="brp_session_pip">Picture-in-picture</string>
+    <string name="brp_session_note">Voltar abre e fecha este menu. Puxe para baixo a barrinha no alto da tela para abri-lo.</string>
+    <string name="brp_session_statistics">Estatísticas na tela</string>
+
+    <string name="brp_reconnecting">Reconectando…</string>
+    <string name="brp_reconnecting_new_settings">Reconectando com os novos ajustes…</string>
+    <string name="brp_reconnecting_lower">Reconectando a %1$s…</string>
+    <string name="brp_switching_to">Trocando para %1$s…</string>
+    <string name="brp_quit_done">%1$s fechado no computador</string>
+    <string name="brp_quit_failed">Não foi possível fechar %1$s no computador</string>
+    <string name="brp_lost_last_measured">Última medição: latência de %1$d ms, %2$s%% dos quadros perdidos, %3$d FPS.</string>
+    <string name="brp_lost_close">Fechar</string>
+    <string name="brp_osc_layout">Layout</string>
+    <string name="brp_osc_this_phone">Neste celular</string>
+    <string name="brp_osc_layout_pad">Pad</string>
+    <string name="brp_osc_layout_fps">Tiro</string>
+    <string name="brp_osc_layout_race">Corrida</string>
+    <string name="brp_osc_layout_fight">Luta</string>
+    <string name="brp_osc_layout_classic">Clássico</string>
+    <string name="brp_osc_layout_pad_note">Como um controle moderno: analógico esquerdo no alto à esquerda, direcional abaixo, botões no alto à direita, analógico direito abaixo deles. Para a maioria dos jogos.</string>
+    <string name="brp_osc_layout_fps_note">Tiro: analógico de movimento grande embaixo à esquerda, mirar (LT) acima; analógico de mira, atirar (RT) e um pulo (A) grande sob o polegar direito; L3 e R3 como botões para correr e golpe corpo a corpo.</string>
+    <string name="brp_osc_layout_race_note">Corrida: analógico grande para o volante à esquerda, freio (LT) e acelerador (RT) maior como pedais à direita, LB/RB para trocar marchas. Sem analógico direito.</string>
+    <string name="brp_osc_layout_fight_note">Luta e fliperama: direcional grande e duas fileiras de botões grandes (X Y RB sobre A B RT), LB e LT acima. Sem analógicos.</string>
+    <string name="brp_osc_layout_classic_note">O layout original do Moonlight, com as mudanças que você salvou nele.</string>
+    <string name="brp_osc_reset">Restaurar este layout</string>
+    <string name="brp_osc_reset_confirm">Toque de novo para desfazer suas mudanças neste layout</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Grid selector: a clear focus ring for keyboard, D-pad and TV remotes. Touch
+     feedback comes from the card's own ripple, so press draws nothing here. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:exitFadeDuration="@android:integer/config_shortAnimTime">
+    <item android:state_focused="true" android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/brp_radius_card" />
+            <solid android:color="@android:color/transparent" />
+            <stroke android:width="@dimen/brp_focus_ring" android:color="@color/brp_focus" />
+        </shape>
+    </item>
+    <item android:drawable="@android:color/transparent" />
+</selector>

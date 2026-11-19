@@ -1,0 +1,5 @@
+<resources>
+    <!-- Dark Big Remote Play look (see values-v21/styles.xml) -->
+    <style name="BrpThemeParent" parent="android:Theme.Material" />
+    <style name="BrpAlertParent" parent="android:Theme.Material.Dialog.Alert" />
+</resources>

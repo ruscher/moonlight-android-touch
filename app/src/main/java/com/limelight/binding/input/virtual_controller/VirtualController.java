@@ -65,6 +65,22 @@ public class VirtualController {
         this.context = context;
         this.handler = new Handler(Looper.getMainLooper());
 
+        // Big Remote Play: the stream (and this layout) can be wider than
+        // DisplayMetrics says (immersive mode hides the navigation bar), and the
+        // real size is only known after layout. Rebuild once it is known or changes.
+        layout.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
+            int w = r - l, h = b - t;
+            if (w > 0 && h > 0 && (w != builtWidth || h != builtHeight) && currentMode == ControllerMode.Active) {
+                handler.post(() -> {
+                    boolean visible = isVisible();
+                    refreshLayout();
+                    if (!visible) {
+                        hide();
+                    }
+                });
+            }
+        });
+
         buttonConfigure = new Button(context);
         buttonConfigure.setAlpha(0.25f);
         buttonConfigure.setFocusable(false);
@@ -110,12 +126,61 @@ public class VirtualController {
         buttonConfigure.setVisibility(View.INVISIBLE);
     }
 
+    private boolean hiddenByUser = false;
+
+    /** Big Remote Play: the person hid the controller; rotation and PiP keep it hidden. */
+    public void setHiddenByUser(boolean hidden) {
+        hiddenByUser = hidden;
+        if (hidden) {
+            hide();
+        }
+    }
+
+    public boolean isHiddenByUser() {
+        return hiddenByUser;
+    }
+
     public void show() {
+        if (hiddenByUser) {
+            return;
+        }
         for (VirtualControllerElement element : elements) {
             element.setVisibility(View.VISIBLE);
         }
 
         buttonConfigure.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Big Remote Play: lift every on-screen button and centre every stick on the
+     * host, e.g. before the Control Center covers the controls. Each element gets
+     * the same ACTION_CANCEL Android would send, then the zeroed state is sent.
+     */
+    public void releaseAll() {
+        if (currentMode == ControllerMode.Active) {
+            long now = android.os.SystemClock.uptimeMillis();
+            android.view.MotionEvent cancel = android.view.MotionEvent.obtain(now, now,
+                    android.view.MotionEvent.ACTION_CANCEL, 0, 0, 0);
+            for (VirtualControllerElement element : elements) {
+                element.onTouchEvent(cancel);
+            }
+            cancel.recycle();
+        }
+        inputContext.inputMap = 0;
+        inputContext.leftTrigger = 0;
+        inputContext.rightTrigger = 0;
+        inputContext.leftStickX = inputContext.leftStickY = 0;
+        inputContext.rightStickX = inputContext.rightStickY = 0;
+        sendControllerInputContext();
+    }
+
+    /** Big Remote Play: same as the gear button (Active, then Move, then Resize, then save). */
+    public void cycleEditMode() {
+        buttonConfigure.performClick();
+    }
+
+    public boolean isVisible() {
+        return buttonConfigure.getVisibility() == View.VISIBLE;
     }
 
     public void removeElements() {
@@ -152,8 +217,23 @@ public class VirtualController {
         }
     }
 
+    private int builtWidth, builtHeight;
+
+    /** Size of the area the controls are laid out in (the stream's frame once laid out). */
+    public int layoutWidth() {
+        return frame_layout.getWidth() > 0 ? frame_layout.getWidth()
+                : context.getResources().getDisplayMetrics().widthPixels;
+    }
+
+    public int layoutHeight() {
+        return frame_layout.getHeight() > 0 ? frame_layout.getHeight()
+                : context.getResources().getDisplayMetrics().heightPixels;
+    }
+
     public void refreshLayout() {
         removeElements();
+        builtWidth = frame_layout.getWidth();
+        builtHeight = frame_layout.getHeight();
 
         DisplayMetrics screen = context.getResources().getDisplayMetrics();
 
@@ -168,6 +248,10 @@ public class VirtualController {
 
         // Apply user preferences onto the default layout
         VirtualControllerConfigurationLoader.loadFromPreferences(this, context);
+
+        if (hiddenByUser) {
+            hide();
+        }
     }
 
     public ControllerMode getControllerMode() {

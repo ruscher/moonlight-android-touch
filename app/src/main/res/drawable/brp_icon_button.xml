@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Header icon button: round ripple, round focus ring -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/brp_ripple">
+    <item android:id="@android:id/mask">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFFFF" />
+        </shape>
+    </item>
+    <item>
+        <selector>
+            <item android:state_focused="true">
+                <shape android:shape="oval">
+                    <solid android:color="@color/brp_chip_neutral" />
+                    <stroke android:width="@dimen/brp_focus_ring" android:color="@color/brp_focus" />
+                </shape>
+            </item>
+            <item android:drawable="@android:color/transparent" />
+        </selector>
+    </item>
+</ripple>

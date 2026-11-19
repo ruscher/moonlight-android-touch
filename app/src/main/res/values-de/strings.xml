@@ -286,4 +286,31 @@
     <string name="summary_checkbox_gamepad_motion_fallback">Verwendet die integrierten Bewegungssensoren Ihres Geräts, wenn Gamepad-Sensoren von Ihrem angeschlossenen Gamepad oder Ihrer Android-Version nicht unterstützt werden.
 \nHinweis: Die Aktivierung dieser Option kann dazu führen, dass Ihr Gamepad auf dem Host als PlayStation-Controller angezeigt wird.</string>
     <string name="pcview_menu_eol">NVIDIA GameStream End-of-Service</string>
+
+    <!-- Big Remote Play Controller UI (BRP-UI.md) -->
+    <string name="brp_section_computers">Computer</string>
+    <string name="brp_add_computer">Computer hinzufügen</string>
+    <string name="brp_how_to_connect">So verbindest du dich</string>
+    <string name="brp_settings">Einstellungen</string>
+    <string name="brp_empty_title">Computer werden gesucht…</string>
+    <string name="brp_empty_body">Öffne auf dem Spiele-Computer Big Remote Play, geh zu Teilen und wähle Freigabe starten. Computer in diesem Netzwerk erscheinen hier von selbst.\n\nDu nutzt Tailscale, Headscale oder ZeroTier, oder der Computer fehlt? Füge ihn über seine Adresse hinzu.</string>
+    <string name="brp_status_online">Online</string>
+    <string name="brp_status_offline">Offline</string>
+    <string name="brp_status_checking">Wird geprüft…</string>
+    <string name="brp_status_paired">Gekoppelt</string>
+    <string name="brp_status_not_paired">Nicht gekoppelt</string>
+    <string name="brp_status_playing">Spielt</string>
+    <string name="brp_applist_subtitle">Wähle, was du spielen möchtest</string>
+    <string name="brp_app_hidden">Ausgeblendet</string>
+    <string name="brp_app_low_bandwidth">Langsames Netz</string>
+    <string name="brp_help_title">Mit dem Spiele-Computer verbinden</string>
+    <string name="brp_help_body">1. Öffne auf dem Spiele-Computer Big Remote Play, geh zu Teilen und wähle Freigabe starten.\n\n2. Lass dieses Gerät im selben Netzwerk oder verbinde beide mit demselben privaten Netzwerk (Tailscale, Headscale oder ZeroTier).\n\n3. Tippe auf den Computer, sobald er hier erscheint. Erscheint er nicht, wähle Computer hinzufügen und gib seine Adresse ein (IP oder Name).\n\n4. Diese App zeigt eine PIN. Big Remote Play fragt auf dem Computer danach: Gib sie dort zum Koppeln ein. Das ist nur einmal nötig.\n\n5. Wähle Desktop für den ganzen Bildschirm, Desktop Low bei langsamer Verbindung oder ein Spiel.</string>
+    <string name="brp_help_moonlight_guide">Moonlight-Anleitung</string>
+    <string name="brp_close">Schließen</string>
+    <string name="brp_about_title">Über Big Remote Play Controller</string>
+    <string name="brp_about_version">Version %1$s</string>
+    <string name="brp_about_body">Die Empfangsseite von Big Remote Play für Android: Spiele die Spiele und nutze den Desktop eines Computers, der sie mit Big Remote Play (Sunshine) teilt.\n\nBasiert auf Moonlight für Android 12.2 vom Moonlight Game Streaming Project. Inoffizielle Version, nicht von den Moonlight-Entwicklern unterstützt.\n\nFreie Software unter der GNU General Public License, Version 3.</string>
+    <string name="brp_category_about">Über</string>
+    <string name="brp_addpc_help">Gib die IP-Adresse oder den Namen des Computers ein. Mit Tailscale, Headscale oder ZeroTier verwendest du seine Adresse in diesem Netzwerk (zum Beispiel 100.x.y.z).</string>
+    <string name="brp_pair_help">Auf dem Spiele-Computer meldet Big Remote Play, dass sich dieses Gerät verbinden möchte: Gib dort diese PIN ein (Seite Teilen). Auch die Sunshine-Webseite nimmt die PIN an.</string>
 </resources>

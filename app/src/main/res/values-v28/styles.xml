@@ -1,0 +1,7 @@
+<resources>
+    <style name="Brp.Base.V28" parent="Brp.Base.V27">
+        <item name="android:dialogCornerRadius">@dimen/brp_radius_dialog</item>
+    </style>
+
+    <style name="Brp.Base" parent="Brp.Base.V28" />
+</resources>

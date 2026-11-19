@@ -284,4 +284,31 @@
     <string name="title_seekbar_vibrate_fallback_strength">Ajuster l\'intensité de la vibration émulée</string>
     <string name="summary_seekbar_vibrate_fallback_strength">Amplifie ou réduit l\'intensité de la vibration sur votre appareil</string>
     <string name="suffix_seekbar_vibrate_fallback_strength">%</string>
+
+    <!-- Big Remote Play Controller UI (BRP-UI.md) -->
+    <string name="brp_section_computers">Ordinateurs</string>
+    <string name="brp_add_computer">Ajouter un ordinateur</string>
+    <string name="brp_how_to_connect">Comment se connecter</string>
+    <string name="brp_settings">Paramètres</string>
+    <string name="brp_empty_title">Recherche d’ordinateurs…</string>
+    <string name="brp_empty_body">Sur l’ordinateur de jeu, ouvrez Big Remote Play, allez dans Partager et choisissez Démarrer le partage. Les ordinateurs de ce réseau apparaissent ici d’eux-mêmes.\n\nVous utilisez Tailscale, Headscale ou ZeroTier, ou l’ordinateur n’apparaît pas ? Ajoutez-le par son adresse.</string>
+    <string name="brp_status_online">En ligne</string>
+    <string name="brp_status_offline">Hors ligne</string>
+    <string name="brp_status_checking">Vérification…</string>
+    <string name="brp_status_paired">Appairé</string>
+    <string name="brp_status_not_paired">Non appairé</string>
+    <string name="brp_status_playing">En jeu</string>
+    <string name="brp_applist_subtitle">Choisissez à quoi jouer</string>
+    <string name="brp_app_hidden">Masqué</string>
+    <string name="brp_app_low_bandwidth">Réseau lent</string>
+    <string name="brp_help_title">Se connecter à l’ordinateur de jeu</string>
+    <string name="brp_help_body">1. Sur l’ordinateur de jeu, ouvrez Big Remote Play, allez dans Partager et choisissez Démarrer le partage.\n\n2. Gardez cet appareil sur le même réseau, ou connectez les deux au même réseau privé (Tailscale, Headscale ou ZeroTier).\n\n3. Touchez l’ordinateur quand il apparaît ici. S’il n’apparaît pas, choisissez Ajouter un ordinateur et saisissez son adresse (IP ou nom).\n\n4. Cette application affiche un code PIN. Sur l’ordinateur, Big Remote Play le demande : saisissez-le là-bas pour appairer. Une seule fois suffit.\n\n5. Choisissez Desktop pour voir tout l’écran, Desktop Low avec une connexion lente, ou un jeu.</string>
+    <string name="brp_help_moonlight_guide">Guide de Moonlight</string>
+    <string name="brp_close">Fermer</string>
+    <string name="brp_about_title">À propos de Big Remote Play Controller</string>
+    <string name="brp_about_version">Version %1$s</string>
+    <string name="brp_about_body">Le côté réception de Big Remote Play sur Android : jouez aux jeux et utilisez le bureau d’un ordinateur qui les partage avec Big Remote Play (Sunshine).\n\nBasé sur Moonlight pour Android 12.2, du Moonlight Game Streaming Project. Version non officielle, non prise en charge par les développeurs de Moonlight.\n\nLogiciel libre sous la licence publique générale GNU, version 3.</string>
+    <string name="brp_category_about">À propos</string>
+    <string name="brp_addpc_help">Saisissez l’adresse IP ou le nom de l’ordinateur. Avec Tailscale, Headscale ou ZeroTier, utilisez son adresse sur ce réseau (par exemple 100.x.y.z).</string>
+    <string name="brp_pair_help">Sur l’ordinateur de jeu, Big Remote Play signale que cet appareil veut se connecter : saisissez-y ce code PIN (page Partager). La page web de Sunshine accepte aussi le code PIN.</string>
 </resources>

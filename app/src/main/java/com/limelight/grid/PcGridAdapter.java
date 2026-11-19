@@ -1,6 +1,7 @@
 package com.limelight.grid;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -48,46 +49,90 @@ public class PcGridAdapter extends GenericGridAdapter<PcView.ComputerObject> {
         return itemList.remove(computer);
     }
 
+    @SuppressWarnings("deprecation") // Context.getColor() needs API 23; minSdk is 21
+    private int color(int id) {
+        return context.getResources().getColor(id);
+    }
+
     @Override
     public void populateView(View parentView, ImageView imgView, ProgressBar prgView, TextView txtView, ImageView overlayView, PcView.ComputerObject obj) {
+        ComputerDetails details = obj.details;
+        boolean online = details.state == ComputerDetails.State.ONLINE;
+        boolean offline = details.state == ComputerDetails.State.OFFLINE;
+        boolean checking = details.state == ComputerDetails.State.UNKNOWN;
+        boolean paired = details.pairState == PairingManager.PairState.PAIRED;
+
         imgView.setImageResource(R.drawable.ic_computer);
-        if (obj.details.state == ComputerDetails.State.ONLINE) {
-            imgView.setAlpha(1.0f);
-        }
-        else {
-            imgView.setAlpha(0.4f);
+        imgView.setAlpha(online || checking ? 1.0f : 0.6f);
+        imgView.setImageTintList(ColorStateList.valueOf(color(
+                offline ? R.color.brp_status_offline : R.color.brp_accent_text)));
+
+        View chip = parentView.findViewById(R.id.grid_image_layout);
+        if (chip != null) {
+            chip.setBackgroundTintList(ColorStateList.valueOf(color(
+                    offline ? R.color.brp_chip_neutral : R.color.brp_chip)));
         }
 
-        if (obj.details.state == ComputerDetails.State.UNKNOWN) {
-            prgView.setVisibility(View.VISIBLE);
-        }
-        else {
-            prgView.setVisibility(View.INVISIBLE);
-        }
+        prgView.setVisibility(checking ? View.VISIBLE : View.INVISIBLE);
 
-        txtView.setText(obj.details.name);
-        if (obj.details.state == ComputerDetails.State.ONLINE) {
-            txtView.setAlpha(1.0f);
-        }
-        else {
-            txtView.setAlpha(0.4f);
-        }
+        txtView.setText(details.name);
+        txtView.setAlpha(offline ? 0.75f : 1.0f);
 
-        if (obj.details.state == ComputerDetails.State.OFFLINE) {
+        if (offline) {
             overlayView.setImageResource(R.drawable.ic_pc_offline);
-            overlayView.setAlpha(0.4f);
             overlayView.setVisibility(View.VISIBLE);
         }
         // We must check if the status is exactly online and unpaired
         // to avoid colliding with the loading spinner when status is unknown
-        else if (obj.details.state == ComputerDetails.State.ONLINE &&
-                obj.details.pairState == PairingManager.PairState.NOT_PAIRED) {
+        else if (online && details.pairState == PairingManager.PairState.NOT_PAIRED) {
             overlayView.setImageResource(R.drawable.ic_lock);
-            overlayView.setAlpha(1.0f);
             overlayView.setVisibility(View.VISIBLE);
         }
         else {
             overlayView.setVisibility(View.GONE);
         }
+
+        // State in words, never by colour alone: Online · Paired, Not paired, Playing, ...
+        String status;
+        int statusColor;
+        if (offline) {
+            status = context.getString(R.string.brp_status_offline);
+            statusColor = R.color.brp_status_offline;
+        }
+        else if (checking) {
+            status = context.getString(R.string.brp_status_checking);
+            statusColor = R.color.brp_status_offline;
+        }
+        else if (!paired) {
+            status = context.getString(R.string.brp_status_pair,
+                    context.getString(R.string.brp_status_online),
+                    context.getString(R.string.brp_status_not_paired));
+            statusColor = R.color.brp_status_attention;
+        }
+        else if (details.runningGameId != 0) {
+            status = context.getString(R.string.brp_status_pair,
+                    context.getString(R.string.brp_status_online),
+                    context.getString(R.string.brp_status_playing));
+            statusColor = R.color.brp_status_playing;
+        }
+        else {
+            status = context.getString(R.string.brp_status_pair,
+                    context.getString(R.string.brp_status_online),
+                    context.getString(R.string.brp_status_paired));
+            statusColor = R.color.brp_status_online;
+        }
+
+        TextView statusView = parentView.findViewById(R.id.grid_status);
+        if (statusView != null) {
+            statusView.setText(status);
+            statusView.setTextColor(color(statusColor));
+        }
+        View dot = parentView.findViewById(R.id.grid_status_dot);
+        if (dot != null) {
+            dot.setBackgroundTintList(ColorStateList.valueOf(color(statusColor)));
+        }
+
+        // Screen readers get the name and the state in one announcement
+        parentView.setContentDescription(details.name + ", " + status);
     }
 }

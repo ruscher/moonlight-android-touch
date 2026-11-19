@@ -15,6 +15,7 @@ import org.jcodec.codecs.h264.io.model.VUIParameters;
 
 import com.limelight.BuildConfig;
 import com.limelight.LimeLog;
+import com.limelight.brp.StreamStats;
 import com.limelight.R;
 import com.limelight.nvstream.av.video.VideoDecoderRenderer;
 import com.limelight.nvstream.jni.MoonBridge;
@@ -107,6 +108,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer implements C
     private VideoStats activeWindowVideoStats;
     private VideoStats lastWindowVideoStats;
     private VideoStats globalVideoStats;
+    private volatile StreamStats latestStats;
 
     private long lastTimestampUs;
     private int lastFrameNumber;
@@ -476,6 +478,11 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer implements C
 
     public void notifyVideoBackground() {
         foreground = false;
+    }
+
+    /** The last second of measurements, or null before the first frames. */
+    public StreamStats getLatestStats() {
+        return latestStats;
     }
 
     public int getActiveVideoFormat() {
@@ -1412,25 +1419,44 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer implements C
 
         // Flip stats windows roughly every second
         if (SystemClock.uptimeMillis() >= activeWindowVideoStats.measurementStartTimestamp + 1000) {
+            // Big Remote Play: the same numbers, always kept (a few arithmetic
+            // operations once per second) for the Control Center and the
+            // connection-lost screen; the text is built only for the overlay.
+            VideoStats lastTwo = new VideoStats();
+            lastTwo.add(lastWindowVideoStats);
+            lastTwo.add(activeWindowVideoStats);
+            VideoStatsFps fps = lastTwo.getFps();
+            String decoder;
+            String codec;
+
+            if ((videoFormat & MoonBridge.VIDEO_FORMAT_MASK_H264) != 0) {
+                decoder = avcDecoder.getName();
+                codec = "H.264";
+            } else if ((videoFormat & MoonBridge.VIDEO_FORMAT_MASK_H265) != 0) {
+                decoder = hevcDecoder.getName();
+                codec = "HEVC";
+            } else if ((videoFormat & MoonBridge.VIDEO_FORMAT_MASK_AV1) != 0) {
+                decoder = av1Decoder.getName();
+                codec = "AV1";
+            } else {
+                decoder = "(unknown)";
+                codec = null;
+            }
+            if (codec != null && (videoFormat & MoonBridge.VIDEO_FORMAT_MASK_10BIT) != 0) {
+                codec += " HDR";
+            }
+
+            float decodeTimeMs = lastTwo.totalFramesReceived > 0 ?
+                    (float)lastTwo.decoderTimeMs / lastTwo.totalFramesReceived : 0;
+            long rttInfo = MoonBridge.getEstimatedRttInfo();
+            float dropPercent = lastTwo.totalFrames > 0 ? (float)lastTwo.framesLost / lastTwo.totalFrames * 100 : 0;
+            float hostLatency = lastTwo.framesWithHostProcessingLatency > 0 ?
+                    (float)lastTwo.totalHostProcessingLatency / 10 / lastTwo.framesWithHostProcessingLatency : -1;
+            latestStats = new StreamStats(initialWidth, initialHeight, fps.receivedFps, fps.renderedFps,
+                    dropPercent, (int)(rttInfo >> 32), (int)rttInfo, decodeTimeMs, hostLatency,
+                    codec, decoder, SystemClock.uptimeMillis());
+
             if (prefs.enablePerfOverlay) {
-                VideoStats lastTwo = new VideoStats();
-                lastTwo.add(lastWindowVideoStats);
-                lastTwo.add(activeWindowVideoStats);
-                VideoStatsFps fps = lastTwo.getFps();
-                String decoder;
-
-                if ((videoFormat & MoonBridge.VIDEO_FORMAT_MASK_H264) != 0) {
-                    decoder = avcDecoder.getName();
-                } else if ((videoFormat & MoonBridge.VIDEO_FORMAT_MASK_H265) != 0) {
-                    decoder = hevcDecoder.getName();
-                } else if ((videoFormat & MoonBridge.VIDEO_FORMAT_MASK_AV1) != 0) {
-                    decoder = av1Decoder.getName();
-                } else {
-                    decoder = "(unknown)";
-                }
-
-                float decodeTimeMs = (float)lastTwo.decoderTimeMs / lastTwo.totalFramesReceived;
-                long rttInfo = MoonBridge.getEstimatedRttInfo();
                 StringBuilder sb = new StringBuilder();
                 sb.append(context.getString(R.string.perf_overlay_streamdetails, initialWidth + "x" + initialHeight, fps.totalFps)).append('\n');
                 sb.append(context.getString(R.string.perf_overlay_decoder, decoder)).append('\n');

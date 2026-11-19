@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Big Remote Play: the stream's Control Center, key bar and reconnects. -->
+<resources>
+    <string name="brp_cc_title">Big Remote Play</string>
+    <string name="brp_cc_open">Open stream menu</string>
+    <string name="brp_cc_close">Close stream menu</string>
+
+    <string name="brp_tab_quick">Quick</string>
+    <string name="brp_tab_keyboard">Keyboard</string>
+    <string name="brp_tab_controller">Controller</string>
+    <string name="brp_tab_display">Screen</string>
+    <string name="brp_tab_video">Video</string>
+    <string name="brp_tab_session">Session</string>
+
+    <string name="brp_quality_measuring">Measuring…</string>
+    <string name="brp_quality_excellent">Excellent</string>
+    <string name="brp_quality_good">Good</string>
+    <string name="brp_quality_fair">Unstable</string>
+    <string name="brp_quality_poor">Poor</string>
+
+    <string name="brp_stat_connection">Connection</string>
+    <string name="brp_stat_network_latency">Network latency</string>
+    <string name="brp_stat_resolution">Resolution</string>
+    <string name="brp_stat_fps">Frame rate</string>
+    <string name="brp_stat_codec">Codec</string>
+    <string name="brp_stat_bitrate">Bitrate (setting)</string>
+    <string name="brp_stat_decode">Decoding time</string>
+    <string name="brp_stat_drops">Frames lost on the network</string>
+    <string name="brp_stat_host_latency">Computer encoding time</string>
+    <string name="brp_value_rtt">%1$d ms (± %2$d)</string>
+    <string name="brp_value_fps">%1$d FPS (received: %2$d)</string>
+    <string name="brp_value_not_reported">Not reported</string>
+
+    <string name="brp_quick_actions">Quick actions</string>
+    <string name="brp_stat_heading">This stream</string>
+    <string name="brp_action_keyboard">Keyboard</string>
+    <string name="brp_action_controller">On-screen controller</string>
+    <string name="brp_action_statistics_mode">Statistics: %1$s</string>
+    <string name="brp_action_switch_screen">Switch screen</string>
+    <string name="brp_action_stretch">Stretch to fill</string>
+    <string name="brp_action_lower_quality">Lower quality and reconnect</string>
+    <string name="brp_action_disconnect">Disconnect</string>
+    <string name="brp_quick_note_disconnect">Disconnect leaves what is running on the computer open; you can come back to it.</string>
+    <string name="brp_confirm_reconnect">Tap again to reconnect</string>
+
+    <string name="brp_perf_off">Off</string>
+    <string name="brp_perf_minimal">Minimal</string>
+    <string name="brp_perf_detailed">Detailed</string>
+
+    <string name="brp_kbd_phone_keyboard">Open the phone keyboard</string>
+    <string name="brp_kbd_phone_keyboard_short">⌨</string>
+    <string name="brp_kbd_extra_keys">Extra keys bar</string>
+    <string name="brp_kbd_function_keys">Function keys F1 to F24</string>
+    <string name="brp_kbd_hide_bar">Hide the extra keys bar</string>
+    <string name="brp_kbd_type_clipboard">Type the text copied on the phone</string>
+    <plurals name="brp_kbd_typed_n">
+        <item quantity="one">Typed %1$d character</item>
+        <item quantity="other">Typed %1$d characters</item>
+    </plurals>
+    <string name="brp_kbd_clipboard_empty">Nothing copied on the phone</string>
+    <string name="brp_kbd_clipboard_partial">Characters typed: %1$d. Left out: %2$d (emoji, control characters or past the 2000-character limit).</string>
+    <string name="brp_kbd_clipboard_note">The text is typed where the cursor is on the computer. Ctrl+V pastes what was copied on the computer instead.</string>
+    <string name="brp_kbd_modifiers">Ctrl, Alt, Shift and Win</string>
+    <string name="brp_kbd_mod_latch">Tap to lock</string>
+    <string name="brp_kbd_mod_hold">Hold while touching</string>
+    <string name="brp_kbd_modifiers_note">Locked keys are shown filled and in capitals. They are released when the bar closes, this menu opens, the screen rotates or the stream ends.</string>
+    <string name="brp_kbd_shortcuts">Shortcuts</string>
+    <string name="brp_kbd_shortcuts_note">Sent to the computer as real key presses.</string>
+    <string name="brp_kbd_sent">Sent %1$s</string>
+    <string name="brp_key_super">Win</string>
+    <string name="brp_key_left">Left arrow</string>
+    <string name="brp_key_right">Right arrow</string>
+    <string name="brp_key_up">Up arrow</string>
+    <string name="brp_key_down">Down arrow</string>
+    <string name="brp_key_space">Space</string>
+
+    <string name="brp_osc_show">Show controller on this phone</string>
+    <string name="brp_osc_edit">Edit layout</string>
+    <string name="brp_osc_edit_note">Edit layout: drag buttons to move them; tap the gear at the top left to switch to resizing, and again to save.</string>
+    <string name="brp_osc_opacity">Controller opacity</string>
+    <string name="brp_osc_which">Which controller to use</string>
+    <string name="brp_osc_two_controllers_touch_on">This app also sends every finger to the computer, so Big Remote Play\'s Touch controls (drawn by the computer) work too. Use one of the two: with both, the game sees two controllers. In Game Window, use the controller on this phone.</string>
+    <string name="brp_osc_two_controllers_touch_off">Touch is sent as a mouse (native touch is off in Settings), so the computer\'s Touch controls do not work; use the controller on this phone.</string>
+    <string name="brp_osc_more_in_settings">Buttons shown, vibration and the stick dead zone are in Settings and apply to the next stream.</string>
+
+    <string name="brp_display_current">Streaming now</string>
+    <string name="brp_display_screens">Screens of the computer</string>
+    <string name="brp_display_loading">Reading the computer\'s entries…</string>
+    <string name="brp_display_unreadable">The computer\'s entries could not be read. The stream keeps working.</string>
+    <string name="brp_display_single">The computer offers one screen. With two or more, Big Remote Play adds an entry per screen (Share → Preferences → Moonlight entries).</string>
+    <string name="brp_display_switch_note">Switching reconnects to the chosen screen\'s entry, keeping your settings.</string>
+    <string name="brp_display_other_entries">Other entries</string>
+    <string name="brp_display_desktop_low_note">Desktop Low limits the bitrate on the computer: use it when the connection is slow.</string>
+    <string name="brp_display_picture">Picture</string>
+    <string name="brp_display_fit">Fit (black bars)</string>
+    <string name="brp_display_stretch">Stretch to fill</string>
+    <string name="brp_confirm_switch_closes">Tap again: this closes %1$s on the computer</string>
+
+    <string name="brp_video_now">This stream</string>
+    <string name="brp_video_now_value">%1$s · %2$d FPS · %3$s · %4$s\nDecoder: %5$s</string>
+    <string name="brp_video_bitrate">Bitrate</string>
+    <string name="brp_preset_data_saver">Data saver</string>
+    <string name="brp_preset_balanced">Balanced</string>
+    <string name="brp_preset_high">High</string>
+    <string name="brp_preset_ultra">Ultra</string>
+    <string name="brp_video_resolution">Resolution</string>
+    <string name="brp_video_native">This screen</string>
+    <string name="brp_video_fps">Frame rate</string>
+    <string name="brp_video_codec">Codec</string>
+    <string name="brp_video_codec_auto">Automatic</string>
+    <string name="brp_video_no_av1">This device has no AV1 decoder.</string>
+    <string name="brp_video_reconnect_note">Requires reconnecting: the computer fixes these when the stream starts. Applying saves them as your settings and reconnects.</string>
+    <string name="brp_video_apply">Apply and reconnect</string>
+
+    <string name="brp_session_resume">Resume</string>
+    <string name="brp_session_reconnect">Reconnect</string>
+    <string name="brp_session_quit">Close on the computer</string>
+    <string name="brp_confirm_quit">Tap again to close %1$s</string>
+    <string name="brp_session_pip">Picture-in-picture</string>
+    <string name="brp_session_note">Back opens and closes this menu. Pull the small bar at the top of the screen down to open it.</string>
+    <string name="brp_session_statistics">Statistics on screen</string>
+
+    <string name="brp_reconnecting">Reconnecting…</string>
+    <string name="brp_reconnecting_new_settings">Reconnecting with the new settings…</string>
+    <string name="brp_reconnecting_lower">Reconnecting at %1$s…</string>
+    <string name="brp_switching_to">Switching to %1$s…</string>
+    <string name="brp_quit_done">%1$s closed on the computer</string>
+    <string name="brp_quit_failed">Could not close %1$s on the computer</string>
+    <string name="brp_lost_last_measured">Last measured: latency %1$d ms, %2$s%% of frames lost, %3$d FPS.</string>
+    <string name="brp_lost_close">Close</string>
+    <string name="brp_osc_layout">Layout</string>
+    <string name="brp_osc_this_phone">This phone</string>
+    <string name="brp_osc_layout_pad">Pad</string>
+    <string name="brp_osc_layout_fps">Shooter</string>
+    <string name="brp_osc_layout_race">Racing</string>
+    <string name="brp_osc_layout_fight">Fighting</string>
+    <string name="brp_osc_layout_classic">Classic</string>
+    <string name="brp_osc_layout_pad_note">Like a modern controller: left stick at the top left, D-pad below it, buttons at the top right, right stick below them. For most games.</string>
+    <string name="brp_osc_layout_fps_note">Shooters: a big movement stick low on the left, aim (LT) above it; aim stick, fire (RT) and a big jump (A) under the right thumb; L3 and R3 as buttons for sprint and melee.</string>
+    <string name="brp_osc_layout_race_note">Racing: a big steering stick on the left, brake (LT) and a bigger accelerator (RT) as pedals on the right, LB/RB to shift gears. No right stick.</string>
+    <string name="brp_osc_layout_fight_note">Fighting and arcade games: a big D-pad and two rows of large buttons (X Y RB over A B RT), LB and LT on top. No sticks.</string>
+    <string name="brp_osc_layout_classic_note">Moonlight\'s original layout, with the changes you saved in it.</string>
+    <string name="brp_osc_reset">Reset this layout</string>
+    <string name="brp_osc_reset_confirm">Tap again to undo your moves in this layout</string>
+    <string name="brp_cc_subtitle">%1$s · %2$s</string>
+    <string name="brp_quality_pill">● %1$s</string>
+    <string name="brp_quality_pill_rtt">● %1$s · %2$d ms</string>
+    <string name="brp_value_resolution">%1$d×%2$d</string>
+    <string name="brp_value_percent">%1$d %%</string>
+    <string name="brp_checked">✓ %1$s</string>
+</resources>

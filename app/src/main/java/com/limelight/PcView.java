@@ -23,6 +23,7 @@ import com.limelight.preferences.StreamSettings;
 import com.limelight.ui.AdapterFragment;
 import com.limelight.ui.AdapterFragmentCallbacks;
 import com.limelight.utils.Dialog;
+import com.limelight.utils.BrpDialogs;
 import com.limelight.utils.HelpLauncher;
 import com.limelight.utils.ServerHelper;
 import com.limelight.utils.ShortcutHelper;
@@ -50,7 +51,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -60,7 +60,8 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class PcView extends Activity implements AdapterFragmentCallbacks {
-    private RelativeLayout noPcFoundLayout;
+    private View noPcFoundLayout;
+    private View pcSectionTitle;
     private PcGridAdapter pcGridAdapter;
     private ShortcutHelper shortcutHelper;
     private ComputerManagerService.ComputerManagerBinder managerBinder;
@@ -154,31 +155,36 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
                 startActivity(i);
             }
         });
+        // Big Remote Play: in-app steps (offline). The upstream web guide is one button
+        // inside, except on Fire TV (see BrpDialogs.showConnectHelp).
         helpButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                HelpLauncher.launchSetupGuide(PcView.this);
+                BrpDialogs.showConnectHelp(PcView.this);
             }
         });
 
-        // Amazon review didn't like the help button because the wiki was not entirely
-        // navigable via the Fire TV remote (though the relevant parts were). Let's hide
-        // it on Fire TV.
-        if (getPackageManager().hasSystemFeature("amazon.hardware.fire_tv")) {
-            helpButton.setVisibility(View.GONE);
-        }
+        // Empty state actions
+        findViewById(R.id.emptyAddComputer).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(PcView.this, AddComputerManually.class));
+            }
+        });
+        findViewById(R.id.emptyHowToConnect).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BrpDialogs.showConnectHelp(PcView.this);
+            }
+        });
 
         getFragmentManager().beginTransaction()
             .replace(R.id.pcFragmentContainer, new AdapterFragment())
             .commitAllowingStateLoss();
 
         noPcFoundLayout = findViewById(R.id.no_pc_found_layout);
-        if (pcGridAdapter.getCount() == 0) {
-            noPcFoundLayout.setVisibility(View.VISIBLE);
-        }
-        else {
-            noPcFoundLayout.setVisibility(View.INVISIBLE);
-        }
+        pcSectionTitle = findViewById(R.id.pcSectionTitle);
+        updateEmptyState();
         pcGridAdapter.notifyDataSetChanged();
     }
 
@@ -427,7 +433,7 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
                         // Spin the dialog off in a thread because it blocks
                         Dialog.displayDialog(PcView.this, getResources().getString(R.string.pair_pairing_title),
                                 getResources().getString(R.string.pair_pairing_msg)+" "+pinStr+"\n\n"+
-                                getResources().getString(R.string.pair_pairing_help), false);
+                                getResources().getString(R.string.brp_pair_help), false);
 
                         PairingManager pm = httpConn.getPairingManager();
 
@@ -702,10 +708,8 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
                 pcGridAdapter.removeComputer(computer);
                 pcGridAdapter.notifyDataSetChanged();
 
-                if (pcGridAdapter.getCount() == 0) {
-                    // Show the "Discovery in progress" view
-                    noPcFoundLayout.setVisibility(View.VISIBLE);
-                }
+                // Show the "Discovery in progress" view if that was the last one
+                updateEmptyState();
 
                 break;
             }
@@ -734,11 +738,19 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
             pcGridAdapter.addComputer(new ComputerObject(details));
 
             // Remove the "Discovery in progress" view
-            noPcFoundLayout.setVisibility(View.INVISIBLE);
+            updateEmptyState();
         }
 
         // Notify the view that the data has changed
         pcGridAdapter.notifyDataSetChanged();
+    }
+
+    // The empty state (searching + how to connect) while no computer is known;
+    // the "Computers" heading and the cards otherwise.
+    private void updateEmptyState() {
+        boolean empty = pcGridAdapter.getCount() == 0;
+        noPcFoundLayout.setVisibility(empty ? View.VISIBLE : View.INVISIBLE);
+        pcSectionTitle.setVisibility(empty ? View.GONE : View.VISIBLE);
     }
 
     @Override

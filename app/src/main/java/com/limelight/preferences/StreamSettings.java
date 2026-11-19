@@ -31,6 +31,7 @@ import com.limelight.LimeLog;
 import com.limelight.PcView;
 import com.limelight.R;
 import com.limelight.binding.video.MediaCodecHelper;
+import com.limelight.utils.BrpDialogs;
 import com.limelight.utils.Dialog;
 import com.limelight.utils.UiHelper;
 
@@ -276,6 +277,20 @@ public class StreamSettings extends Activity {
 
             addPreferencesFromResource(R.xml.preferences);
             PreferenceScreen screen = getPreferenceScreen();
+
+            // Big Remote Play: About (version, Moonlight origin, license); offline dialog
+            Preference about = findPreference("brp_about");
+            if (about != null) {
+                about.setSummary(getString(R.string.brp_about_version,
+                        BrpDialogs.versionName(getActivity())));
+                about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        BrpDialogs.showAbout(getActivity());
+                        return true;
+                    }
+                });
+            }
 
             // hide on-screen controls category on non touch screen devices
             if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)) {
