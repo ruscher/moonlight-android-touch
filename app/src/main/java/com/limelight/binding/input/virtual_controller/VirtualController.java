@@ -118,6 +118,38 @@ public class VirtualController {
         buttonConfigure.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Big Remote Play: lift every on-screen button and centre every stick on the
+     * host, e.g. before the Control Center covers the controls. Each element gets
+     * the same ACTION_CANCEL Android would send, then the zeroed state is sent.
+     */
+    public void releaseAll() {
+        if (currentMode == ControllerMode.Active) {
+            long now = android.os.SystemClock.uptimeMillis();
+            android.view.MotionEvent cancel = android.view.MotionEvent.obtain(now, now,
+                    android.view.MotionEvent.ACTION_CANCEL, 0, 0, 0);
+            for (VirtualControllerElement element : elements) {
+                element.onTouchEvent(cancel);
+            }
+            cancel.recycle();
+        }
+        inputContext.inputMap = 0;
+        inputContext.leftTrigger = 0;
+        inputContext.rightTrigger = 0;
+        inputContext.leftStickX = inputContext.leftStickY = 0;
+        inputContext.rightStickX = inputContext.rightStickY = 0;
+        sendControllerInputContext();
+    }
+
+    /** Big Remote Play: same as the gear button (Active, then Move, then Resize, then save). */
+    public void cycleEditMode() {
+        buttonConfigure.performClick();
+    }
+
+    public boolean isVisible() {
+        return buttonConfigure.getVisibility() == View.VISIBLE;
+    }
+
     public void removeElements() {
         for (VirtualControllerElement element : elements) {
             frame_layout.removeView(element);
