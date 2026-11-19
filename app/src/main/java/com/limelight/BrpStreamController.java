@@ -75,7 +75,8 @@ public class BrpStreamController implements StreamSession {
     private boolean stretched;
     private boolean oscWasVisible;
     private boolean grabWasOn;
-    private boolean leaving;
+    private volatile boolean leaving;
+    private boolean stopped;
 
     private final Runnable minimalOverlayTick = new Runnable() {
         @Override
@@ -168,6 +169,15 @@ public class BrpStreamController implements StreamSession {
      */
     boolean handleMenuKeyDown(KeyEvent event) {
         switch (event.getKeyCode()) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_VOLUME_MUTE:
+                return false;
+            case KeyEvent.KEYCODE_BACK:
+                // Navigation Back arrives through onBackPressed (virtual key flag);
+                // a controller's Back/Select button comes here.
+                controlCenter.close();
+                return true;
             case KeyEvent.KEYCODE_BUTTON_B:
             case KeyEvent.KEYCODE_ESCAPE:
             case KeyEvent.KEYCODE_BUTTON_START:
@@ -187,7 +197,6 @@ public class BrpStreamController implements StreamSession {
             case KeyEvent.KEYCODE_DPAD_CENTER:
             case KeyEvent.KEYCODE_ENTER:
             case KeyEvent.KEYCODE_TAB:
-            case KeyEvent.KEYCODE_BACK:
                 return false;
             default:
                 return true;
@@ -219,6 +228,7 @@ public class BrpStreamController implements StreamSession {
 
     /** The stream is ending (activity stopping or connection lost). */
     void onStreamStopping() {
+        stopped = true;
         handler.removeCallbacksAndMessages(null);
         keyboardBar.releaseAll();
         controlCenter.closeNow();
@@ -411,11 +421,15 @@ public class BrpStreamController implements StreamSession {
             osc.releaseAll();
             osc.hide();
         }
-        // Give the mouse pointer back to Android so a mouse can use the menu.
+        // Give the mouse pointer back to Android so a mouse can use the menu,
+        // but keep input grabbed: key releases and stick centring of physical
+        // keyboards and controllers must still reach the computer.
         grabWasOn = game.grabbedInput;
         if (grabWasOn) {
-            game.setInputGrabState(false);
+            game.setPointerCaptureForMenu(false);
         }
+        // Keys of the bar under the scrim must not be reachable by D-pad focus.
+        keyboardBar.view().setDescendantFocusability(android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS);
     }
 
     @Override
@@ -424,8 +438,13 @@ public class BrpStreamController implements StreamSession {
             game.virtualController.show();
         }
         if (grabWasOn && game.connected) {
-            game.setInputGrabState(true);
+            game.setPointerCaptureForMenu(true);
         }
+        keyboardBar.view().setDescendantFocusability(android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS);
+        if (keyboardBar.isVisible()) {
+            keyboardBar.view().bringToFront();
+        }
+        controlCenter.setHandleVisible(game.connected && !isInPip());
         game.streamView.requestFocus();
         game.hideSystemUi(250);
     }
@@ -478,7 +497,7 @@ public class BrpStreamController implements StreamSession {
         // Paced off the UI thread so a long text never fills the input queue.
         new Thread(() -> {
             for (String chunk : chunks.chunks) {
-                if (game.conn == null || !game.connected) {
+                if (leaving || game.conn == null || !game.connected) {
                     return;
                 }
                 game.conn.sendUtf8Text(chunk);
@@ -514,13 +533,20 @@ public class BrpStreamController implements StreamSession {
     @Override
     public void setOnScreenControllerVisible(boolean visible) {
         if (visible && game.virtualController == null) {
+            // Off in Settings: create it now and count gamepad 1 as attached,
+            // as upstream does when it starts with the controller on.
+            game.prefConfig.onscreenController = true;
             game.virtualController = new VirtualController(game.controllerHandler,
                     (FrameLayout) game.streamView.getParent(), game);
             game.virtualController.refreshLayout();
+            if (controlCenter.isOpen()) {
+                game.virtualController.hide(); // never above the open menu
+            }
         }
         if (game.virtualController == null) {
             return;
         }
+        game.virtualController.setHiddenByUser(!visible);
         if (!visible) {
             game.virtualController.releaseAll();
         }
@@ -569,6 +595,9 @@ public class BrpStreamController implements StreamSession {
     }
 
     private void applyPerfMode() {
+        if (stopped) {
+            return;
+        }
         // The decoder reads this flag every second to decide whether to build the
         // detailed text; the minimal line is built here from the same numbers.
         game.prefConfig.enablePerfOverlay = perfMode == PERF_DETAILED;
@@ -652,7 +681,6 @@ public class BrpStreamController implements StreamSession {
         suspendInput();
         onStreamStopping();
         game.displayedFailureDialog = true; // no error dialog from the stream we are leaving
-        game.stopConnection();
 
         Intent intent = new Intent(game.getIntent());
         intent.putExtra(Game.EXTRA_APP_ID, appId);
@@ -660,7 +688,9 @@ public class BrpStreamController implements StreamSession {
         intent.putExtra(Game.EXTRA_APP_HDR, hdr);
         intent.putExtra(EXTRA_REASON, reason);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        game.relaunchWith(intent);
+        // Start the next stream only after this one has ended on the host
+        // (NvConnection launches over HTTP before its start/stop semaphore).
+        game.stopConnectionThen(() -> game.relaunchWith(intent));
     }
 
     boolean isLeaving() {

@@ -25,12 +25,17 @@ devices without a touchscreen (TV) and in picture-in-picture.
    - every key and latched modifier of the key bar released;
    - the on-screen controller gets `ACTION_CANCEL` on every element, its state is
      zeroed and sent, and it is hidden;
-   - mouse capture is released so a physical mouse can use the menu.
+   - mouse pointer capture is released so a physical mouse can use the menu.
+     Input stays *grabbed*: releases from a physical keyboard and the centring of
+     a controller's sticks and triggers still reach the computer (an independent
+     review found that ungrabbing dropped them, leaving W or a deflected stick
+     held on the host);
+   - the key bar's keys are blocked from D-pad focus under the scrim.
 2. The scrim (full screen, `clickable`) is brought to the front: from now on no
    touch reaches the stream. Tapping it closes the menu.
 3. A physical controller keeps playing (its sticks still reach the game). Its
-   button *presses* go to the menu: B/Start/Escape close, A clicks the focused
-   item, D-pad keys move focus. Key *releases* always reach the game, so a button
+   button *presses* go to the menu: B/Back/Start/Escape close, A clicks the focused
+   item, D-pad keys move focus; volume keys keep working. Key *releases* always reach the game, so a button
    held when the menu opened is released on the host.
 
 Closing restores the on-screen controller's visibility and mouse capture.

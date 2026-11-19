@@ -110,7 +110,24 @@ public class VirtualController {
         buttonConfigure.setVisibility(View.INVISIBLE);
     }
 
+    private boolean hiddenByUser = false;
+
+    /** Big Remote Play: the person hid the controller; rotation and PiP keep it hidden. */
+    public void setHiddenByUser(boolean hidden) {
+        hiddenByUser = hidden;
+        if (hidden) {
+            hide();
+        }
+    }
+
+    public boolean isHiddenByUser() {
+        return hiddenByUser;
+    }
+
     public void show() {
+        if (hiddenByUser) {
+            return;
+        }
         for (VirtualControllerElement element : elements) {
             element.setVisibility(View.VISIBLE);
         }
@@ -200,6 +217,10 @@ public class VirtualController {
 
         // Apply user preferences onto the default layout
         VirtualControllerConfigurationLoader.loadFromPreferences(this, context);
+
+        if (hiddenByUser) {
+            hide();
+        }
     }
 
     public ControllerMode getControllerMode() {

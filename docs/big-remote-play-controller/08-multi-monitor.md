@@ -37,12 +37,15 @@ Sunshine streams one entry per session and cannot change the captured screen
 inside it, so switching is a reconnect, done in one step:
 
 1. `suspendInput()` releases every finger, button, key and modifier on the host.
-2. The current stream is stopped (`Game.stopConnection`); failure dialogs of the
-   stream being left are suppressed.
+2. The current stream is stopped and the next one starts only after the stop has
+   finished on a background thread (`Game.stopConnectionThen`): `NvConnection`
+   launches the entry over HTTP *before* its start/stop semaphore, so starting
+   at once could reach Sunshine while the old session still counted. Failure
+   dialogs of the stream being left are suppressed; if the person leaves the app
+   during the wait, nothing is relaunched.
 3. `Game` is started again with the same intent but the new entry's id, name and
    HDR flag, plus a spinner text ("Switching to 02 - Monitor…").
-4. In the new stream, `NvConnection` waits on its semaphore until the old stream
-   has stopped, sees a different entry running on the host and quits it before
+4. In the new stream, `NvConnection` sees a different entry running on the host and quits it before
    launching the new one (upstream's `quitAndLaunch`).
 
 Settings are kept because they are the saved settings. Native touch starts with a

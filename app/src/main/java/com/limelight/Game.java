@@ -120,7 +120,7 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     private SpinnerDialog spinner;
     boolean displayedFailureDialog = false;
     private boolean connecting = false;
-    boolean connected = false;
+    volatile boolean connected = false;
     private boolean autoEnterPip = false;
     private boolean surfaceCreated = false;
     private boolean attemptedConnection = false;
@@ -1401,6 +1401,9 @@ public class Game extends Activity implements SurfaceHolder.Callback,
 
     /** Controlled reconnect: this stream is already stopped; start the next one. */
     void relaunchWith(Intent intent) {
+        if (isFinishing() || isDestroyed()) {
+            return; // the person left while the old stream was stopping
+        }
         finish();
         startActivity(intent);
     }
@@ -2474,6 +2477,39 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     public void stageComplete(String stage) {
     }
 
+    private Thread stopThread;
+
+    /** Releases only the mouse pointer capture; key and joystick events keep flowing. */
+    void setPointerCaptureForMenu(boolean capture) {
+        if (capture) {
+            inputCaptureProvider.enableCapture();
+            if (cursorVisible) {
+                inputCaptureProvider.showCursor();
+            }
+        } else {
+            inputCaptureProvider.disableCapture();
+        }
+    }
+
+    /**
+     * Big Remote Play: stops the stream and runs {@code then} on the UI thread
+     * once the host has been told the session ended, so a reconnect never
+     * launches while the old session still counts on the server.
+     */
+    void stopConnectionThen(final Runnable then) {
+        stopConnection();
+        final Thread pending = stopThread;
+        new Thread(() -> {
+            if (pending != null) {
+                try {
+                    pending.join(5000);
+                } catch (InterruptedException ignored) {
+                }
+            }
+            runOnUiThread(then);
+        }, "BRP wait for stop").start();
+    }
+
     void stopConnection() {
         if (connecting || connected) {
             connecting = connected = false;
@@ -2489,11 +2525,12 @@ public class Game extends Activity implements SurfaceHolder.Callback,
             // thread to keep things smooth for the UI. Inside moonlight-common,
             // we prevent another thread from starting a connection before and
             // during the process of stopping this one.
-            new Thread() {
+            stopThread = new Thread() {
                 public void run() {
                     conn.stop();
                 }
-            }.start();
+            };
+            stopThread.start();
         }
     }
 

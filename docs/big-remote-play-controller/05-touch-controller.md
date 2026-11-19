@@ -13,7 +13,10 @@ With both visible the game sees two controllers.
 ## In the Control Center (Controller page)
 
 - **Show controller on this phone** — live. If the stream started without it,
-  it is created on the spot. Hiding it first releases every button and stick.
+  it is created on the spot (and gamepad 1 is reported as attached, as upstream
+  does when it starts with it). Hiding it first releases every button and stick,
+  and the choice survives rotation and picture-in-picture
+  (`VirtualController.setHiddenByUser`).
 - **Edit layout** — closes the menu and enters upstream's edit mode (move;
   tap the gear for resize; tap again to save). Same editor as before.
 - **Opacity** — live, saved to the same preference as Settings.

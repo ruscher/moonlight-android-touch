@@ -105,7 +105,7 @@ public class RemoteKeyboardBar {
         });
     }
 
-    public View view() {
+    public android.view.ViewGroup view() {
         return root;
     }
 
