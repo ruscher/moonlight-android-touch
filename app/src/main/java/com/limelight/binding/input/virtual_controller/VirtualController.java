@@ -65,6 +65,22 @@ public class VirtualController {
         this.context = context;
         this.handler = new Handler(Looper.getMainLooper());
 
+        // Big Remote Play: the stream (and this layout) can be wider than
+        // DisplayMetrics says (immersive mode hides the navigation bar), and the
+        // real size is only known after layout. Rebuild once it is known or changes.
+        layout.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
+            int w = r - l, h = b - t;
+            if (w > 0 && h > 0 && (w != builtWidth || h != builtHeight) && currentMode == ControllerMode.Active) {
+                handler.post(() -> {
+                    boolean visible = isVisible();
+                    refreshLayout();
+                    if (!visible) {
+                        hide();
+                    }
+                });
+            }
+        });
+
         buttonConfigure = new Button(context);
         buttonConfigure.setAlpha(0.25f);
         buttonConfigure.setFocusable(false);
@@ -201,8 +217,23 @@ public class VirtualController {
         }
     }
 
+    private int builtWidth, builtHeight;
+
+    /** Size of the area the controls are laid out in (the stream's frame once laid out). */
+    public int layoutWidth() {
+        return frame_layout.getWidth() > 0 ? frame_layout.getWidth()
+                : context.getResources().getDisplayMetrics().widthPixels;
+    }
+
+    public int layoutHeight() {
+        return frame_layout.getHeight() > 0 ? frame_layout.getHeight()
+                : context.getResources().getDisplayMetrics().heightPixels;
+    }
+
     public void refreshLayout() {
         removeElements();
+        builtWidth = frame_layout.getWidth();
+        builtHeight = frame_layout.getHeight();
 
         DisplayMetrics screen = context.getResources().getDisplayMetrics();
 

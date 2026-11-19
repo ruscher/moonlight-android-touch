@@ -41,11 +41,39 @@ upstream's retransmissions. It runs when the Control Center opens, when the
 controller is hidden from the menu and on every controlled reconnect. Upstream's
 own cases (touch cancel, focus loss, stop) are unchanged.
 
+## Layouts (`brp/OscLayouts`)
+
+Chosen in **Controller → Layout**, live, with a preview drawn from the same data
+that builds the controller (`brp/ui/OscLayoutPreview`). Saved as
+`brp_osc_layout`; applies to the next streams too.
+
+| Layout | Idea |
+| --- | --- |
+| Pad (default for new installs) | A modern controller: left stick top-left, D-pad below, face buttons top-right, right stick below them, LT/RT in the bottom corners, LB/RB/Back/Start/Guide in the centre. |
+| Shooter | Big movement stick low on the left, aim (LT) above it; aim stick, fire (RT) and a big jump (A) under the right thumb; L3/R3 as buttons (sprint, melee). |
+| Racing | Big steering stick; brake (LT) and a bigger accelerator (RT) as pedals; LB/RB to shift. No right stick. |
+| Fighting | Big D-pad; arcade panel X Y RB over A B RT, LB and LT on top. No sticks. |
+| Classic | Upstream's code and its saved edits. Selected automatically for someone who had already moved buttons in it. |
+
+- Positions are in upstream's 128×72 grid, anchored left/centre/right, so a 20:9
+  phone gets its extra width in the middle. Unit tests check that no two
+  elements overlap at 16:9 and 20:9, that everything fits, ids are unique and
+  every layout has A/B/X/Y, D-pad, triggers, bumpers, Back/Start/Guide.
+- Each layout keeps its own moves and resizes (its own preferences file);
+  **Reset this layout** (two taps) forgets them.
+- The controller is laid out in the stream's real frame. Upstream used
+  `DisplayMetrics`, which excludes the hidden navigation bar: on the test phone
+  (2400×1080) the right-hand buttons ended 220 px before the edge. It is now
+  rebuilt once the frame's real size is known or changes.
+
+Verified on a Poco X4 Pro (Android 13) streaming from a Big Remote Play host:
+element bounds read with `uiautomator` match the specs; switching Pad → Shooter
+from the open Control Center rebuilt the controller live without a crash.
+
 ## Not done
 
-Profiles (Default/Compact/Racing/FPS…), per-orientation layouts, rotation,
-duplication, per-button haptic strength, trigger/stick curves. These touch
-upstream's `VirtualControllerConfigurationLoader` storage format and need
-device testing; they are the next controller iteration. Settings that already
-exist upstream (buttons shown, vibration, dead zone, flip face buttons) stay in
-Settings and apply to the next stream.
+Per-orientation layouts, rotation and duplication of elements, per-button
+haptic strength, trigger/stick curves, restyling the elements (they keep
+upstream's drawing). Settings that already exist upstream (buttons shown,
+vibration, dead zone, flip face buttons) stay in Settings and apply to the next
+stream.

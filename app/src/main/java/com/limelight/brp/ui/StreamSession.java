@@ -64,6 +64,12 @@ public interface StreamSession {
     boolean onScreenControllerVisible();
     void setOnScreenControllerVisible(boolean visible);
     void editOnScreenControllerLayout();
+    /** Layout key ({@link com.limelight.brp.OscLayouts.Layout#key}) of the controller on the phone. */
+    String onScreenControllerLayout();
+    /** Switches layout, shows the controller; saved for the next streams. */
+    void setOnScreenControllerLayout(String key);
+    /** Forgets the moves and resizes of the current layout. */
+    void resetOnScreenControllerLayout();
     int onScreenControllerOpacity();
     void setOnScreenControllerOpacity(int percent);
     /** Native touch on: the host may draw its own controller (Touch controls). */

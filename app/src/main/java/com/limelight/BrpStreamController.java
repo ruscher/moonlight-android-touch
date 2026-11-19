@@ -428,6 +428,8 @@ public class BrpStreamController implements StreamSession {
         if (grabWasOn) {
             game.setPointerCaptureForMenu(false);
         }
+        // A pull from near the top edge also reveals Android's bars; hide them again.
+        game.hideSystemUi(300);
         // Keys of the bar under the scrim must not be reachable by D-pad focus.
         keyboardBar.view().setDescendantFocusability(android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS);
     }
@@ -564,6 +566,43 @@ public class BrpStreamController implements StreamSession {
         if (game.virtualController != null) {
             game.virtualController.show();
             game.virtualController.cycleEditMode();
+        }
+    }
+
+    @Override
+    public String onScreenControllerLayout() {
+        return com.limelight.binding.input.virtual_controller.VirtualControllerConfigurationLoader
+                .currentLayout(game).key;
+    }
+
+    @Override
+    public void setOnScreenControllerLayout(String key) {
+        com.limelight.binding.input.virtual_controller.VirtualControllerConfigurationLoader.setLayout(game,
+                com.limelight.brp.OscLayouts.Layout.fromKey(key, com.limelight.brp.OscLayouts.Layout.PAD));
+        rebuildOnScreenController();
+    }
+
+    @Override
+    public void resetOnScreenControllerLayout() {
+        com.limelight.binding.input.virtual_controller.VirtualControllerConfigurationLoader.resetLayout(game,
+                com.limelight.binding.input.virtual_controller.VirtualControllerConfigurationLoader.currentLayout(game));
+        rebuildOnScreenController();
+    }
+
+    /** Lifts everything, rebuilds the controller in the chosen layout and shows it. */
+    private void rebuildOnScreenController() {
+        if (game.virtualController == null) {
+            setOnScreenControllerVisible(true); // creates it in the chosen layout
+            return;
+        }
+        game.virtualController.releaseAll();
+        game.virtualController.setHiddenByUser(false);
+        game.virtualController.refreshLayout();
+        if (controlCenter.isOpen()) {
+            game.virtualController.hide(); // shown again when the menu closes
+            oscWasVisible = true;
+        } else {
+            game.virtualController.show();
         }
     }
 

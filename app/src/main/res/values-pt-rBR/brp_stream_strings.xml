@@ -30,6 +30,7 @@
     <string name="brp_value_not_reported">Não informado</string>
 
     <string name="brp_quick_actions">Ações rápidas</string>
+    <string name="brp_stat_heading">Esta transmissão</string>
     <string name="brp_action_keyboard">Teclado</string>
     <string name="brp_action_controller">Controle na tela</string>
     <string name="brp_action_statistics_mode">Estatísticas: %1$s</string>
@@ -123,4 +124,18 @@
     <string name="brp_quit_failed">Não foi possível fechar %1$s no computador</string>
     <string name="brp_lost_last_measured">Última medição: latência de %1$d ms, %2$s%% dos quadros perdidos, %3$d FPS.</string>
     <string name="brp_lost_close">Fechar</string>
+    <string name="brp_osc_layout">Layout</string>
+    <string name="brp_osc_this_phone">Neste celular</string>
+    <string name="brp_osc_layout_pad">Pad</string>
+    <string name="brp_osc_layout_fps">Tiro</string>
+    <string name="brp_osc_layout_race">Corrida</string>
+    <string name="brp_osc_layout_fight">Luta</string>
+    <string name="brp_osc_layout_classic">Clássico</string>
+    <string name="brp_osc_layout_pad_note">Como um controle moderno: analógico esquerdo no alto à esquerda, direcional abaixo, botões no alto à direita, analógico direito abaixo deles. Para a maioria dos jogos.</string>
+    <string name="brp_osc_layout_fps_note">Tiro: analógico de movimento grande embaixo à esquerda, mirar (LT) acima; analógico de mira, atirar (RT) e um pulo (A) grande sob o polegar direito; L3 e R3 como botões para correr e golpe corpo a corpo.</string>
+    <string name="brp_osc_layout_race_note">Corrida: analógico grande para o volante à esquerda, freio (LT) e acelerador (RT) maior como pedais à direita, LB/RB para trocar marchas. Sem analógico direito.</string>
+    <string name="brp_osc_layout_fight_note">Luta e fliperama: direcional grande e duas fileiras de botões grandes (X Y RB sobre A B RT), LB e LT acima. Sem analógicos.</string>
+    <string name="brp_osc_layout_classic_note">O layout original do Moonlight, com as mudanças que você salvou nele.</string>
+    <string name="brp_osc_reset">Restaurar este layout</string>
+    <string name="brp_osc_reset_confirm">Toque de novo para desfazer suas mudanças neste layout</string>
 </resources>

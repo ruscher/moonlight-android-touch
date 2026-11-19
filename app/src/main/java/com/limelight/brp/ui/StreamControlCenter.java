@@ -494,19 +494,6 @@ public class StreamControlCenter {
     // ------------------------------------------------------------------ Quick
 
     private void buildQuick() {
-        FlowLayout tiles = flow();
-        tiles.setChildWidth(BrpUi.dp(activity, 150));
-        vQuality = tile(tiles, R.string.brp_stat_connection);
-        vLatency = tile(tiles, R.string.brp_stat_network_latency);
-        vResolution = tile(tiles, R.string.brp_stat_resolution);
-        vFps = tile(tiles, R.string.brp_stat_fps);
-        vCodec = tile(tiles, R.string.brp_stat_codec);
-        TextView bitrate = tile(tiles, R.string.brp_stat_bitrate);
-        bitrate.setText(QualityPresets.formatMbps(session.bitrateKbps()));
-        vDecode = tile(tiles, R.string.brp_stat_decode);
-        vDrops = tile(tiles, R.string.brp_stat_drops);
-        vHost = tile(tiles, R.string.brp_stat_host_latency);
-
         heading(R.string.brp_quick_actions);
         FlowLayout f = flow();
         toggle(f, s(R.string.brp_action_keyboard), session.isKeyboardBarVisible(), on -> {
@@ -539,6 +526,21 @@ public class StreamControlCenter {
         disconnect.setOnClickListener(v -> session.disconnect());
         f.addView(disconnect);
         note(s(R.string.brp_quick_note_disconnect));
+
+        heading(R.string.brp_stat_heading);
+        FlowLayout tiles = flow();
+        tiles.setChildWidth(BrpUi.dp(activity, 150));
+        vQuality = tile(tiles, R.string.brp_stat_connection);
+        vLatency = tile(tiles, R.string.brp_stat_network_latency);
+        vResolution = tile(tiles, R.string.brp_stat_resolution);
+        vFps = tile(tiles, R.string.brp_stat_fps);
+        vCodec = tile(tiles, R.string.brp_stat_codec);
+        TextView bitrate = tile(tiles, R.string.brp_stat_bitrate);
+        bitrate.setText(QualityPresets.formatMbps(session.bitrateKbps()));
+        vDecode = tile(tiles, R.string.brp_stat_decode);
+        vDrops = tile(tiles, R.string.brp_stat_drops);
+        vHost = tile(tiles, R.string.brp_stat_host_latency);
+
     }
 
     private void refreshStats() {
@@ -637,6 +639,76 @@ public class StreamControlCenter {
     // ------------------------------------------------------------------ Controller
 
     private void buildController() {
+        heading(R.string.brp_osc_layout);
+        FlowLayout layouts = flow();
+        layouts.setChildWidth(BrpUi.dp(activity, 168));
+        final com.limelight.brp.OscLayouts.Layout[] all = com.limelight.brp.OscLayouts.Layout.values();
+        final int[] names = {R.string.brp_osc_layout_pad, R.string.brp_osc_layout_fps, R.string.brp_osc_layout_race,
+                R.string.brp_osc_layout_fight, R.string.brp_osc_layout_classic};
+        final int[] notes = {R.string.brp_osc_layout_pad_note, R.string.brp_osc_layout_fps_note,
+                R.string.brp_osc_layout_race_note, R.string.brp_osc_layout_fight_note,
+                R.string.brp_osc_layout_classic_note};
+        String current = session.onScreenControllerLayout();
+        final TextView layoutNote = BrpUi.text(activity, "", 13, BrpUi.TEXT_2);
+        final LinearLayout[] cards = new LinearLayout[all.length];
+        for (int i = 0; i < all.length; i++) {
+            final int idx = i;
+            LinearLayout card = new LinearLayout(activity);
+            card.setOrientation(LinearLayout.VERTICAL);
+            card.setBackground(BrpUi.buttonBackground(activity, 14));
+            int p = BrpUi.dp(activity, 8);
+            card.setPadding(p, p, p, p);
+            card.setFocusable(true);
+            card.setClickable(true);
+            if (all[i] == com.limelight.brp.OscLayouts.Layout.CLASSIC) {
+                TextView classic = BrpUi.text(activity, "Moonlight", 14, BrpUi.TEXT_2);
+                classic.setGravity(Gravity.CENTER);
+                classic.setMinHeight(BrpUi.dp(activity, 68));
+                card.addView(classic, new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            } else {
+                card.addView(new OscLayoutPreview(activity, all[i]), new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            }
+            final TextView name = BrpUi.text(activity, s(names[i]), 15, BrpUi.TEXT);
+            name.setGravity(Gravity.CENTER);
+            name.setPadding(0, BrpUi.dp(activity, 6), 0, 0);
+            card.addView(name);
+            boolean on = all[i].key.equals(current);
+            card.setSelected(on);
+            name.setTypeface(on ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            name.setText(on ? "✓ " + s(names[i]) : s(names[i]));
+            card.setContentDescription(s(names[i]));
+            if (on) {
+                layoutNote.setText(s(notes[i]));
+            }
+            card.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+                @Override
+                public void onInitializeAccessibilityNodeInfo(View host, android.view.accessibility.AccessibilityNodeInfo info) {
+                    super.onInitializeAccessibilityNodeInfo(host, info);
+                    info.setCheckable(true);
+                    info.setChecked(host.isSelected());
+                }
+            });
+            card.setOnClickListener(v -> {
+                session.setOnScreenControllerLayout(all[idx].key);
+                for (int j = 0; j < cards.length; j++) {
+                    boolean sel = j == idx;
+                    cards[j].setSelected(sel);
+                    TextView n = (TextView) cards[j].getChildAt(1);
+                    n.setText(sel ? "✓ " + s(names[j]) : s(names[j]));
+                    n.setTypeface(sel ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+                }
+                layoutNote.setText(s(notes[idx]));
+                v.announceForAccessibility(s(names[idx]));
+            });
+            cards[i] = card;
+            layouts.addView(card);
+        }
+        layoutNote.setPadding(0, BrpUi.dp(activity, 6), 0, BrpUi.dp(activity, 2));
+        content.addView(layoutNote);
+
+        heading(R.string.brp_osc_this_phone);
         FlowLayout f = flow();
         toggle(f, s(R.string.brp_osc_show), session.onScreenControllerVisible(),
                 session::setOnScreenControllerVisible);
@@ -647,6 +719,9 @@ public class StreamControlCenter {
             close();
             session.editOnScreenControllerLayout();
         });
+        final TextView reset = action(f, s(R.string.brp_osc_reset), null);
+        reset.setOnClickListener(v -> confirmThen(reset, s(R.string.brp_osc_reset_confirm),
+                session::resetOnScreenControllerLayout));
         note(s(R.string.brp_osc_edit_note));
 
         heading(R.string.brp_osc_opacity);
